@@ -15,11 +15,14 @@ node tools/bench/lexical-baseline.mjs bench/synthetic-v0.json --profile 4k
 npm run bench:joint -- --store .tmp/histos-bench
 npm run bench:joint -- --store .tmp/histos-bench --json
 npm run bench:joint -- --store .tmp/histos-bench --profile 4k
+npm run bench:joint -- --store .tmp/histos-bench --report .tmp/histos-joint-evidence.json
 ```
 
 No package install is required. The runner uses Node built-ins only; this does not settle the future HISTOS service language or dependency stack.
 
 The joint benchmark requires an explicit artifact-store directory because Phase-1 externalization has `manual` retention in v0. The CLI does not create an implicit cleanup policy or delete retained artifacts.
+
+Use `--report <file>` when a run should leave durable review evidence. It publishes a `histos.benchmark-joint-evidence/v0` envelope containing the full joint report, derived summary, and non-path execution options. Publication uses a private same-directory temporary file plus an atomic hard link and refuses an existing destination with `REPORT_EXISTS`; it never overwrites or deletes prior evidence. A correctness-failing run still publishes the failing evidence before returning nonzero. The envelope deliberately omits the suite path and artifact-store root.
 
 ## Suite format v0
 

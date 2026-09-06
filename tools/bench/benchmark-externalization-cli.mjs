@@ -1,3 +1,6 @@
+import { createHash, randomUUID } from 'node:crypto';
+import { link, mkdir, rm, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 function parseNonNegativeInteger(raw, label) {
@@ -11,6 +14,7 @@ export function parseArgs(argv) {
   const options = {
     suitePath: null,
     storeRoot: null,
+    reportPath: null,
     profileId: null,
     thresholdBytes: 256,
     previewBytes: 64,
@@ -28,11 +32,12 @@ export function parseArgs(argv) {
       options.json = true;
       continue;
     }
-    if (arg === '--store' || arg === '--profile' || arg === '--threshold' || arg === '--preview') {
+    if (arg === '--store' || arg === '--report' || arg === '--profile' || arg === '--threshold' || arg === '--preview') {
       const value = argv[index + 1];
       if (value === undefined || value.startsWith('--')) throw new Error(`${arg} requires a value`);
       index += 1;
       if (arg === '--store') options.storeRoot = value;
+      if (arg === '--report') options.reportPath = value;
       if (arg === '--profile') options.profileId = value;
       if (arg === '--threshold') options.thresholdBytes = parseNonNegativeInteger(value, 'threshold_bytes');
       if (arg === '--preview') options.previewBytes = parseNonNegativeInteger(value, 'preview_bytes');
@@ -46,6 +51,7 @@ export function parseArgs(argv) {
   if (!options.help) {
     if (options.suitePath === null) throw new Error('suite path required');
     if (options.storeRoot === null || options.storeRoot.length === 0) throw new Error('--store required');
+    if (options.reportPath !== null && options.reportPath.length === 0) throw new Error('--report requires a non-empty value');
     if (options.profileId !== null && options.profileId.length === 0) throw new Error('--profile requires a non-empty value');
   }
 
@@ -96,6 +102,43 @@ export function summarizeReport(report) {
   });
 }
 
+export function buildEvidenceEnvelope(report, summary, options) {
+  return Object.freeze({
+    schema: 'histos.benchmark-joint-evidence/v0',
+    suite_id: report.suite_id,
+    execution_options: Object.freeze({
+      profile: options.profileId,
+      threshold_bytes: options.thresholdBytes,
+      preview_bytes: options.previewBytes,
+    }),
+    report,
+    summary,
+  });
+}
+
+export async function publishEvidenceReport(reportPath, envelope) {
+  const bytes = Buffer.from(`${JSON.stringify(envelope, null, 2)}\n`, 'utf8');
+  const directory = dirname(reportPath);
+  await mkdir(directory, { recursive: true });
+  const tempPath = `${reportPath}.tmp-${process.pid}-${randomUUID()}`;
+  try {
+    await writeFile(tempPath, bytes, { flag: 'wx', mode: 0o600 });
+    try {
+      await link(tempPath, reportPath);
+    } catch (error) {
+      if (error?.code === 'EEXIST') throw new Error(`REPORT_EXISTS: refusing to overwrite ${reportPath}`);
+      throw error;
+    }
+  } finally {
+    await rm(tempPath, { force: true });
+  }
+  return Object.freeze({
+    path: reportPath,
+    bytes: bytes.byteLength,
+    sha256: createHash('sha256').update(bytes).digest('hex'),
+  });
+}
+
 function formatScalar(value) {
   if (value === null) return 'null';
   if (typeof value === 'number' && !Number.isInteger(value)) return value.toFixed(6);
@@ -133,7 +176,7 @@ export async function main(argv, {
   }
 
   if (options.help) {
-    stdout.write('usage: node tools/bench/benchmark-externalization-cli.mjs <suite.json> --store <dir> [--profile <id>] [--threshold <bytes>] [--preview <bytes>] [--json]\n');
+    stdout.write('usage: node tools/bench/benchmark-externalization-cli.mjs <suite.json> --store <dir> [--report <file>] [--profile <id>] [--threshold <bytes>] [--preview <bytes>] [--json]\n');
     return 0;
   }
 
@@ -149,6 +192,9 @@ export async function main(argv, {
       previewBytes: options.previewBytes,
     });
     const summary = summarizeReport(report);
+    if (options.reportPath !== null) {
+      await publishEvidenceReport(options.reportPath, buildEvidenceEnvelope(report, summary, options));
+    }
     stdout.write(options.json ? `${JSON.stringify(summary, null, 2)}\n` : `${formatText(summary)}\n`);
     return summary.all_externalization_correctness_preserved === false ? 1 : 0;
   } catch (error) {

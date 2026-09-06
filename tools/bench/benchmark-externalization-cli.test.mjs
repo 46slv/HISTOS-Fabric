@@ -1,4 +1,8 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { mkdtemp } from 'node:fs/promises';
 import test from 'node:test';
 
 import { formatText, main, parseArgs, summarizeReport } from './benchmark-externalization-cli.mjs';
@@ -44,10 +48,11 @@ function capture() {
   };
 }
 
-test('parses explicit store and bounded numeric options, rejecting ambiguous input', () => {
-  assert.deepEqual(parseArgs(['bench/suite.json', '--store', 'tmp/artifacts', '--profile', '4k', '--threshold', '0', '--preview', '64', '--json']), {
+test('parses explicit store/report and bounded numeric options, rejecting ambiguous input', () => {
+  assert.deepEqual(parseArgs(['bench/suite.json', '--store', 'tmp/artifacts', '--report', 'tmp/report.json', '--profile', '4k', '--threshold', '0', '--preview', '64', '--json']), {
     suitePath: 'bench/suite.json',
     storeRoot: 'tmp/artifacts',
+    reportPath: 'tmp/report.json',
     profileId: '4k',
     thresholdBytes: 0,
     previewBytes: 64,
@@ -96,6 +101,51 @@ test('main emits JSON and forwards all execution options to the joint runner', a
   assert.equal(JSON.parse(out.read()).suite_id, 'fixture');
 });
 
+test('explicit report path publishes one durable no-overwrite evidence envelope', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'histos-cli-evidence-'));
+  const reportPath = join(root, 'nested', 'evidence.json');
+  const out = capture();
+  const err = capture();
+  const args = ['bench/synthetic-v0.json', '--store', join(root, 'store'), '--report', reportPath, '--profile', '4k'];
+  const run = async () => fakeReport();
+
+  const first = await main(args, { run, stdout: out.stream, stderr: err.stream });
+  assert.equal(first, 0);
+  assert.equal(err.read(), '');
+  const before = await readFile(reportPath);
+  const evidence = JSON.parse(before);
+  assert.equal(evidence.schema, 'histos.benchmark-joint-evidence/v0');
+  assert.equal(evidence.suite_id, 'fixture');
+  assert.deepEqual(evidence.execution_options, { profile: '4k', threshold_bytes: 256, preview_bytes: 64 });
+  assert.equal(evidence.report.schema, 'histos.benchmark-externalization-report/v0');
+  assert.equal(evidence.summary.schema, 'histos.benchmark-joint-summary/v0');
+
+  const secondOut = capture();
+  const secondErr = capture();
+  const second = await main(args, { run, stdout: secondOut.stream, stderr: secondErr.stream });
+  assert.equal(second, 1);
+  assert.equal(secondOut.read(), '');
+  assert.match(secondErr.read(), /REPORT_EXISTS: refusing to overwrite/);
+  assert.deepEqual(await readFile(reportPath), before);
+});
+
+test('failed correctness gate still publishes the exact failing evidence before returning nonzero', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'histos-cli-failure-evidence-'));
+  const reportPath = join(root, 'failed.json');
+  const out = capture();
+  const err = capture();
+  const code = await main(['bench/synthetic-v0.json', '--store', join(root, 'store'), '--report', reportPath], {
+    run: async () => fakeReport({ preserved4k: 1 }),
+    stdout: out.stream,
+    stderr: err.stream,
+  });
+  assert.equal(code, 1);
+  assert.equal(err.read(), '');
+  const evidence = JSON.parse(await readFile(reportPath, 'utf8'));
+  assert.equal(evidence.summary.all_externalization_correctness_preserved, false);
+  assert.match(out.read(), /profile=4k .*externalized=1\/2/);
+});
+
 test('main fails the measurement gate when any measured case loses reopen correctness', async () => {
   const out = capture();
   const err = capture();
@@ -120,6 +170,6 @@ test('help is side-effect free and does not require a suite or store', async () 
   });
   assert.equal(code, 0);
   assert.equal(called, false);
-  assert.match(out.read(), /usage:/);
+  assert.match(out.read(), /usage:.*--report/);
   assert.equal(err.read(), '');
 });
