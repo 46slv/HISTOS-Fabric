@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tools/bench/lexical-baseline.test.mjs",
+    "test": "node --test tools/bench/lexical-baseline.test.mjs tools/externalize/artifact-store.test.mjs",
     "bench:baseline": "node tools/bench/lexical-baseline.mjs bench/synthetic-v0.json"
   }
 }
