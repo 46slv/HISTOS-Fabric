@@ -44,6 +44,22 @@ The report records, per case/profile:
 
 The first baseline is intentionally simple: exact normalized lexical token hits create two-line context windows, overlapping windows merge, and candidates are selected by deterministic score until the byte budget is exhausted.
 
+## Externalization comparison seam
+
+`tools/bench/benchmark-externalization.mjs` joins an existing lexical report to the Phase-1 externalization measurement without allowing gold labels to influence retrieval or probe choice.
+
+For each case with at least one selected lexical hit it:
+
+1. re-reads the exact allowed corpus and verifies every file still matches the lexical report SHA-256/byte identity;
+2. serializes that allowed corpus into one deterministic benchmark payload;
+3. chooses the first actual lexical matched line as the verification probe;
+4. measures whole-payload exposure against `externalize -> literal search -> exact reopen` application bytes;
+5. reports retrieval metrics and externalization metrics together under `histos.benchmark-externalization-report/v0`.
+
+A source identity change fails closed as `SOURCE_MOVED`. A no-answer/empty-selection case is marked `NOT_APPLICABLE_EMPTY_SELECTION` rather than becoming a fake externalization correctness pass.
+
+This comparison is still an application-level byte experiment. It is not tokenizer accounting, automatic Codex/OpenCode interception, or evidence that model quality improved.
+
 ## Known H0 gaps
 
 - `rendered_tokens` is intentionally `NOT_IMPLEMENTED`; byte budgeting must not be mislabeled as a provider tokenizer result.
