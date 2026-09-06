@@ -30,6 +30,15 @@ This directory records the current target boundary, ecosystem relationships, res
    - benchmark/evaluation direction;
    - adoption rules.
 
+## Executable candidates
+
+These surfaces are runnable **experimental candidates**, not stable service/runtime authority:
+
+- [`../bench/README.md`](../bench/README.md) — H0 deterministic retrieval benchmark scaffold with fixed byte budgets, exact source identity/reopen coordinates and machine-readable metrics.
+- [`EXTERNALIZATION_V0.md`](EXTERNALIZATION_V0.md) — Phase-1 content-addressed oversized-result externalization, bounded reread and search boundary.
+
+Their exact implementation/tests are authoritative for claims made by those candidates. They do not imply that the daemon, MCP surface, Context Compiler, memory backend, retention policy or production integration exists.
+
 ## Status vocabulary
 
 | Status | Meaning |
