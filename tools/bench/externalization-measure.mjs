@@ -14,6 +14,10 @@ function assertNonNegativeInteger(value, label) {
   if (!Number.isInteger(value) || value < 0) throw new Error(`${label} must be a non-negative integer`);
 }
 
+function containsCaseInsensitive(text, query) {
+  return text.toLocaleLowerCase().includes(query.toLocaleLowerCase());
+}
+
 export async function measureExternalization({
   root,
   payload,
@@ -37,14 +41,15 @@ export async function measureExternalization({
   });
 
   if (!externalized.externalized) {
+    const externalizedActiveBytes = utf8Bytes(externalized);
     return Object.freeze({
       schema: REPORT_SCHEMA,
       externalized: false,
-      correctness_preserved: externalized.inline_utf8.includes(query),
+      correctness_preserved: containsCaseInsensitive(externalized.inline_utf8, query),
       baseline_active_bytes: baselineBytes,
-      externalized_active_bytes: utf8Bytes(externalized),
-      reduction_bytes: baselineBytes - utf8Bytes(externalized),
-      reduction_ratio: baselineBytes === 0 ? null : 1 - utf8Bytes(externalized) / baselineBytes,
+      externalized_active_bytes: externalizedActiveBytes,
+      reduction_bytes: baselineBytes - externalizedActiveBytes,
+      reduction_ratio: baselineBytes === 0 ? null : 1 - externalizedActiveBytes / baselineBytes,
       evidence: Object.freeze({ disposition: externalized.disposition }),
     });
   }
@@ -65,7 +70,7 @@ export async function measureExternalization({
     match &&
     read &&
     read.text_utf8 === match.text &&
-    read.text_utf8.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+    containsCaseInsensitive(read.text_utf8, query),
   );
 
   return Object.freeze({
