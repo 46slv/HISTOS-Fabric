@@ -59,6 +59,22 @@ test('missing evidence does not become a false correctness pass', async () => {
   });
 });
 
+test('inline and externalized paths use the same case-insensitive verification semantics', async () => {
+  await withStore(async (root) => {
+    const report = await measureExternalization({
+      root,
+      payload: 'Prefix Verification_Marker suffix',
+      query: 'verification_marker',
+      thresholdBytes: 4096,
+      previewBytes: 32,
+    });
+
+    assert.equal(report.externalized, false);
+    assert.equal(report.correctness_preserved, true);
+    assert.equal(report.evidence.disposition, 'INLINE');
+  });
+});
+
 test('identical payload measurement remains content-address stable', async () => {
   await withStore(async (root) => {
     const options = {
