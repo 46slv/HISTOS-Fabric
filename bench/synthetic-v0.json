@@ -1,0 +1,56 @@
+{
+  "schema": "histos.benchmark-suite/v0",
+  "suite_id": "synthetic-js-md-v0",
+  "profiles": [
+    { "id": "2k", "max_bytes": 2048 },
+    { "id": "4k", "max_bytes": 4096 },
+    { "id": "8k", "max_bytes": 8192 }
+  ],
+  "cases": [
+    {
+      "id": "trace-source-moved-to-code",
+      "query": "SOURCE_MOVED source changed capture seal snapshot digest",
+      "corpus": [
+        "fixtures/tiny-repo/src/snapshot.mjs",
+        "fixtures/tiny-repo/src/cache.mjs",
+        "fixtures/tiny-repo/docs/recovery.md"
+      ],
+      "required_evidence_groups": [
+        {
+          "id": "source-moved-implementation",
+          "ranges": [
+            { "path": "fixtures/tiny-repo/src/snapshot.mjs", "start_line": 9, "end_line": 11 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "derived-cache-authority-boundary",
+      "query": "derived cache rebuilt source canonical truth",
+      "corpus": [
+        "fixtures/tiny-repo/src/snapshot.mjs",
+        "fixtures/tiny-repo/src/cache.mjs",
+        "fixtures/tiny-repo/docs/recovery.md"
+      ],
+      "required_evidence_groups": [
+        {
+          "id": "rebuildable-derived-state",
+          "ranges": [
+            { "path": "fixtures/tiny-repo/docs/recovery.md", "start_line": 7, "end_line": 7 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "authorized-no-answer",
+      "query": "credential password bearer oauth jwt",
+      "corpus": [
+        "fixtures/tiny-repo/src/snapshot.mjs",
+        "fixtures/tiny-repo/src/cache.mjs",
+        "fixtures/tiny-repo/docs/recovery.md"
+      ],
+      "required_evidence_groups": [],
+      "expect_no_answer": true
+    }
+  ]
+}
