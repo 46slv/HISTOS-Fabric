@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tools/bench/lexical-baseline.test.mjs tools/bench/externalization-measure.test.mjs tools/bench/benchmark-externalization.test.mjs tools/externalize/artifact-store.test.mjs",
-    "bench:baseline": "node tools/bench/lexical-baseline.mjs bench/synthetic-v0.json"
+    "test": "node --test tools/bench/lexical-baseline.test.mjs tools/bench/externalization-measure.test.mjs tools/bench/benchmark-externalization.test.mjs tools/bench/benchmark-externalization-cli.test.mjs tools/externalize/artifact-store.test.mjs",
+    "bench:baseline": "node tools/bench/lexical-baseline.mjs bench/synthetic-v0.json",
+    "bench:joint": "node tools/bench/benchmark-externalization-cli.mjs bench/synthetic-v0.json"
   }
 }

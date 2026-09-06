@@ -12,9 +12,14 @@ It deliberately does **not** claim a Context Compiler, service runtime, MCP inte
 node --test tools/bench/lexical-baseline.test.mjs
 node tools/bench/lexical-baseline.mjs bench/synthetic-v0.json
 node tools/bench/lexical-baseline.mjs bench/synthetic-v0.json --profile 4k
+npm run bench:joint -- --store .tmp/histos-bench
+npm run bench:joint -- --store .tmp/histos-bench --json
+npm run bench:joint -- --store .tmp/histos-bench --profile 4k
 ```
 
 No package install is required. The runner uses Node built-ins only; this does not settle the future HISTOS service language or dependency stack.
+
+The joint benchmark requires an explicit artifact-store directory because Phase-1 externalization has `manual` retention in v0. The CLI does not create an implicit cleanup policy or delete retained artifacts.
 
 ## Suite format v0
 
@@ -57,6 +62,8 @@ For each case with at least one selected lexical hit it:
 5. reports retrieval metrics and externalization metrics together under `histos.benchmark-externalization-report/v0`.
 
 A source identity change fails closed as `SOURCE_MOVED`. A no-answer/empty-selection case is marked `NOT_APPLICABLE_EMPTY_SELECTION` rather than becoming a fake externalization correctness pass.
+
+`tools/bench/benchmark-externalization-cli.mjs` turns that seam into one bounded command across the suite's 2k/4k/8k profiles. Its summary places retrieval recall/precision, raw selected-source exposure, rendered bytes, no-answer results, externalized application bytes, reduction, and reopen-correctness counts on the same per-profile line (or JSON object). The command exits nonzero when any measured externalization case loses exact search/reopen correctness; retrieval scores remain measurements rather than hard-coded pass thresholds.
 
 This comparison is still an application-level byte experiment. It is not tokenizer accounting, automatic Codex/OpenCode interception, or evidence that model quality improved.
 
