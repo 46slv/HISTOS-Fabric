@@ -35,6 +35,12 @@ This directory records the current target boundary, ecosystem relationships, res
    - locally observed Codex/OpenCode shared-memory evidence and remaining gaps;
    - candidate reuse boundaries, research questions and adoption gates.
 
+6. [`TEAMAI_CLI_RESEARCH_TARGET.md`](TEAMAI_CLI_RESEARCH_TARGET.md)
+   - Tencent `teamai-cli` as cross-harness shared-context / learning prior art;
+   - friction-triggered learning, recall, promotion, code-graph and telemetry mechanisms;
+   - explicit comparison against HISTOS provenance, freshness and authority requirements;
+   - benchmark and adapter experiments before any adoption.
+
 ## Status vocabulary
 
 | Status | Meaning |
