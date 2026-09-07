@@ -30,6 +30,11 @@ This directory records the current target boundary, ecosystem relationships, res
    - benchmark/evaluation direction;
    - adoption rules.
 
+5. [`KURA_RESEARCH_TARGET.md`](KURA_RESEARCH_TARGET.md)
+   - `lna-lab/distill-kura` as a HISTOS memory-plane benchmark target;
+   - locally observed Codex/OpenCode shared-memory evidence and remaining gaps;
+   - candidate reuse boundaries, research questions and adoption gates.
+
 ## Status vocabulary
 
 | Status | Meaning |
