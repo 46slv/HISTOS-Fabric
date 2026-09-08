@@ -90,7 +90,9 @@ Verified supersessions write an immutable envelope to `supersessions/<id>.json`
 complete host-approved subject, whose relation is included in its claim hash.
 Normal recall suppresses the old record even if the correction's evidence or
 record file disappears. Recall and readable export include `supersessions`
-with `active` or `unresolved` state and the missing/stale reason. Lost or revoked
+with `active` or `unresolved` state and the missing/stale reason, plus the
+correction's exact reference identities (`kind`, `path`, `sha256`, `bytes` and
+optional line range). Lost or revoked
 provenance, corrupt tombstones, or inaccessible approved scope fail recall with
 `MEMORY_SUPERSESSION_UNRESOLVED`; they never silently restore obsolete history.
 

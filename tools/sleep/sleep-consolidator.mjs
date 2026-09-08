@@ -4,6 +4,11 @@ import { hostname } from 'node:os';
 import path from 'node:path';
 import { readMemoryRecord } from '../memory/evidence-memory.mjs';
 import { readCompiledUnderstanding } from '../understanding/compiled-understanding.mjs';
+import { createMemorySuppressionReader } from '../memory/suppression-index.mjs';
+
+// H04 public host boundary; the implementation lives with H03's source-owned
+// memory verifier so Sleep can consume it without gaining history access.
+export { createMemorySuppressionReader } from '../memory/suppression-index.mjs';
 
 const SCHEMA = 'histos.sleep-state/v1';
 const MAX_BYTES = 16 * 1024 * 1024;
@@ -142,9 +147,15 @@ function validateInspection(result, event) {
 
 function validateSuppression(projection, event) {
   if (Buffer.byteLength(JSON.stringify(projection) ?? '') > 256 * 1024) fail('SLEEP_RESULT_TOO_LARGE');
-  if (!projection || projection.scope_id !== event.scope_id || projection.resource_id !== event.resource_id || projection.complete !== true || !HASH.test(projection.authority_sha256 ?? '') || !Array.isArray(projection.suppressions) || projection.suppressions.length > 128) fail('SLEEP_SUPPRESSION_AUTHORITY_INVALID');
+  if (!projection || projection.scope_id !== event.scope_id || projection.resource_id !== event.resource_id || projection.complete !== true || !HASH.test(projection.authority_sha256 ?? '') ||
+      !Number.isSafeInteger(projection.authority_bytes) || projection.authority_bytes < 0 || !Array.isArray(projection.suppressions) || projection.suppressions.length > 128) fail('SLEEP_SUPPRESSION_AUTHORITY_INVALID');
   for (const marker of projection.suppressions) {
-    if (marker.id !== event.resource_id || !ID.test(marker.superseded_by ?? '') || !HASH.test(marker.claim_sha256 ?? '') || !['active', 'unresolved'].includes(marker.state)) fail('SLEEP_SUPPRESSION_AUTHORITY_INVALID');
+    if (marker.id !== event.resource_id || !ID.test(marker.superseded_by ?? '') || !HASH.test(marker.claim_sha256 ?? '') || !['active', 'unresolved'].includes(marker.state) ||
+        !Array.isArray(marker.references) || marker.references.length === 0 || marker.references.length > 128) fail('SLEEP_SUPPRESSION_AUTHORITY_INVALID');
+    for (const reference of marker.references) {
+      if (!reference || !['source', 'evidence'].includes(reference.kind) || typeof reference.path !== 'string' || !reference.path || !HASH.test(reference.sha256 ?? '') ||
+          !Number.isSafeInteger(reference.bytes) || reference.bytes < 0 || reference.bytes > MAX_BYTES) fail('SLEEP_SUPPRESSION_AUTHORITY_INVALID');
+    }
   }
   return structuredClone(projection);
 }

@@ -31,6 +31,13 @@ source stores, provenance approval, or candidate activation.
 - `recoverSleepWriter({root, expectedToken})` removes a crashed writer's lock only
   when its exact token and local host match and its PID is no longer alive.
   PID reuse refuses recovery. There is no force takeover option.
+- `rebuildMemorySuppressionIndex({indexRoot, memory})` reads the public H03
+  memory API once and atomically publishes a deterministic, source-owned
+  incoming-suppression index. It returns the authority SHA-256/byte count and
+  never promotes a candidate.
+- `readMemorySuppression({indexRoot, scope_id, resource_id})` returns one
+  complete bounded projection for an indexed subject. `createMemorySuppressionReader`
+  binds the index root and scope before the callback is passed to Sleep.
 
 `inspect` is a host-injected trusted, read-only callback, not an agent-supplied
 payload. Use `createH03SleepInspector` at the public H03 boundary. Generic callback
@@ -51,14 +58,23 @@ them, and never exposes a suppressed old candidate even when its replacement is
 unreadable. A checksum names the authority projection; trust comes from the
 host-owned callback, not caller-provided JSON or a hash alone.
 
-The host must supply a bounded per-subject lookup and own snapshot freshness and
-completeness. The existing H03 individual API lacks incoming suppression and the
-public recall API scans history. No production indexed suppression callback is
-implemented here; **memory integration remains blocked until that boundary is
-provided**. The regression builds a test-host projection from public H03 recall
-once per source transition and does bounded lookups; Sleep never invokes recall
-per delta. Missing authority fails closed, rather than silently treating the
-suppression list as empty. This is a safety repair, not H04 package closure.
+The source-owned adapter in `tools/memory/suppression-index.mjs` supplies that
+bounded lookup. A rebuild calls H03 `recallMemory()` once, then writes
+`index.json` through a synced temporary file and atomic rename. The index's
+authority projection is canonical and carries `authority_sha256` plus exact
+`authority_bytes`; every marker carries H03's `id`, `superseded_by`, approved
+`claim_sha256`, exact correction references (`kind`, `path`, `sha256`, `bytes`),
+and `state` (`active` or `unresolved`). A stale or deleted correction remains
+`unresolved` with its original hash/byte identity, so an old record is never
+resurrected. The prior committed index remains intact when an H03 rebuild
+fails. Reads bind both `scope_id` and `resource_id`, verify the state and
+authority checksums, and fail closed for a missing subject/index, corruption,
+cross-scope request, oversized identity/projection, or incomplete marker.
+
+An indexed subject with no incoming marker returns a complete empty list only
+when that subject was present in the atomically rebuilt authority snapshot.
+Sleep never invokes H03 recall per delta. The index is a cache of H03 authority,
+not a second authority or candidate-activation path.
 
 ## Transaction and interruption contract
 
@@ -107,11 +123,18 @@ or evidence file is deleted. This is explicit conservative retention, not GC.
 
 ## Verification and remaining acceptance
 
-Run `node --test tools/sleep/sleep-consolidator.test.mjs` from the HISTOS root.
+Run `node --test tools/memory/evidence-memory.test.mjs tools/memory/suppression-index.test.mjs tools/sleep/sleep-consolidator.test.mjs` from the HISTOS root.
 Tests cover burst coalescing, bounded admission, retry isolation, idempotency,
 pre/post-commit interruption, actual crashed child-process lock recovery,
-scope/corruption refusal, source change through the real H03 public APIs and
-candidate provenance boundaries. Synthetic inspector cases are unit tests.
+scope/corruption refusal, source change through the real H03 public APIs,
+deterministic source-owned suppression rebuild/readback (including stale/deleted
+corrections), and candidate provenance boundaries. Synthetic inspector cases
+are unit tests.
+
+The indexed callback is a source-owned local adapter contract only. F06 task
+identity, STOP/quotas/claims, next wake, restart handling and Mission completion
+remain external; this component does not claim a scheduler wake or production
+host acceptance.
 
 `node tools/sleep/sleep-demo.mjs --output-root ABSOLUTE_FRESH_PRIVATE_DIRECTORY`
 creates only explicitly scoped local fixture files, then uses the actual H03

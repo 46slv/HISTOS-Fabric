@@ -12,7 +12,7 @@ import { captureMemory, memoryClaimSha256, recallMemory } from '../memory/eviden
 
 const exec = promisify(execFile), scopeId = 'scope-a';
 const digest = data => createHash('sha256').update(data).digest('hex');
-const emptyFixtureSuppression = async request => ({ ...request, complete: true, authority_sha256: digest('test-host-empty-suppression-registry'), suppressions: [] });
+const emptyFixtureSuppression = async request => ({ ...request, complete: true, authority_sha256: digest('test-host-empty-suppression-registry'), authority_bytes: Buffer.byteLength('test-host-empty-suppression-registry'), suppressions: [] });
 async function fixture(t) {
   const root = await mkdtemp(path.join(tmpdir(), 'histos-sleep-'));
   t.after(() => rm(root, { recursive: true, force: true }));
@@ -224,7 +224,8 @@ test('H04-IV-01 initial sleep honors H03 suppression when correction source and 
     const authority = await recallMemory(options);
     assert.equal(authority.records.length, 0); assert.equal(authority.supersessions[0].state, 'unresolved');
     let lookups = 0;
-    const readMemorySuppression = async request => { lookups++; return { ...request, complete: true, authority_sha256: sleepDigest(authority), suppressions: authority.supersessions.filter(marker => marker.id === request.resource_id) }; };
+    const authorityText = JSON.stringify(authority);
+    const readMemorySuppression = async request => { lookups++; return { ...request, complete: true, authority_sha256: sleepDigest(authority), authority_bytes: Buffer.byteLength(authorityText), suppressions: authority.supersessions.filter(marker => marker.id === request.resource_id) }; };
     const isolated = { root: path.join(f.root, deleted ? 'deleted-case' : 'stale-case'), scopeId };
     await enqueueSleep({ ...isolated, events });
     await runSleep({ ...isolated, inspect: createH03SleepInspector({ memory: options, readMemorySuppression }) });

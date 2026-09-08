@@ -275,7 +275,7 @@ function renderExport(scope, records, refusals, currentTruthRefs, supersessions)
     text += `\nHost-verified provenance:\n${record.verification.attestations.filter(Boolean).map((item) => `- ${item.reference.path}: provenance=${item.provenance_kind} lineage=${item.lineage_id} origin-sha256=${item.origin_sha256} supports-claim=${item.supports_claim}`).join('\n') || '- none'}\n`;
   }
   if (refusals.length) text += `\n## Refused records\n${refusals.map((item) => `- ${item.id}: ${item.reason}`).join('\n')}\n`;
-  if (supersessions.length) text += `\n## Durable supersessions\n${supersessions.map((item) => `- ${item.id} superseded by ${item.superseded_by}: ${item.state}${item.reason ? ` (${item.reason})` : ''}; approved claim sha256=${item.claim_sha256}`).join('\n')}\n`;
+  if (supersessions.length) text += `\n## Durable supersessions\n${supersessions.map((item) => `- ${item.id} superseded by ${item.superseded_by}: ${item.state}${item.reason ? ` (${item.reason})` : ''}; approved claim sha256=${item.claim_sha256}; references=${item.references.map((ref) => `${ref.kind}:${ref.path} sha256=${ref.sha256} bytes=${ref.bytes}`).join(', ')}`).join('\n')}\n`;
   return text;
 }
 
@@ -367,6 +367,12 @@ export async function recallMemory({ memoryRoot, scope: inputScope, sourceRoot, 
   const tombstones = await loadSupersessions(memoryRoot, context);
   const supersessions = tombstones.flatMap((record) => record.relations.supersedes.map((id) => ({
     id, superseded_by: record.id, claim_sha256: record.verification.claim_sha256,
+    // Preserve the exact authenticated correction identity for source-owned
+    // H04 suppression projections, including when the correction is stale or
+    // its record has been deleted. Caller provenance labels are not copied.
+    references: record.references.map(({ kind, path, sha256, bytes, start_line, end_line }) => ({
+      kind, path, sha256, bytes, ...(start_line === undefined ? {} : { start_line, end_line }),
+    })),
     state: validById.has(record.id) ? 'active' : 'unresolved',
     reason: validById.has(record.id) ? null : (refusals.find((item) => item.id === record.id)?.reason ?? 'MEMORY_MISSING'),
   })));
@@ -423,3 +429,8 @@ export async function exportMemory(options) {
     rendered_sha256: digest(Buffer.from(renderedMarkdown)),
   };
 }
+
+// Compatibility export for hosts that historically imported H04's reader from
+// the H03 module. The persisted suppression-index module remains canonical;
+// this re-export does not provide a second authority implementation.
+export { createMemorySuppressionReader } from './suppression-index.mjs';
