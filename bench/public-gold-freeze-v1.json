@@ -1,0 +1,17 @@
+{
+  "schema": "histos.gold-freeze/v1",
+  "status": "FROZEN",
+  "reviewer": "independent-h00-gold-verifier-1f903aa2-d0e2-43dd-8377-353abf5660da",
+  "manifest_sha256": "fa4d2f0ecc33aef32720f38a40489e4166e2854dd25695a921db091a3ba377d2",
+  "gold_sha256": "146cc45d9ba119376fa7ec8feec838966bfcc9472e5da55da8127857f7a90ad6",
+  "reviewed_cases": [
+    "heartbeat-pending-guard",
+    "goal-dry-run",
+    "context-rotation",
+    "latest-leaf-tiebreak",
+    "local-supervisor-escalation",
+    "checkpoint-bounds",
+    "absent-feature"
+  ],
+  "method": "Independently read every corpus file from git show origin/main:path and the fixed commit, verified fixture byte equality, Git blob, SHA256 and size; reviewed all seven questions and required ranges solely from source semantics, with no scores or retriever inspection. Manifest line_count uses newline splitting including the trailing empty record. Refined ancestry/return and supervision evidence; replaced unrelated negative with absent local-agent decision implementation. This receipt freezes annotations only, not H00 completion."
+}
