@@ -37,8 +37,10 @@ These surfaces are runnable **experimental candidates**, not stable service/runt
 - [`../bench/README.md`](../bench/README.md) — H0 deterministic retrieval benchmark scaffold with fixed byte budgets, exact source identity/reopen coordinates and machine-readable metrics.
 - [`CONTEXT_CONTRACT_V1.md`](CONTEXT_CONTRACT_V1.md) — H00 public frozen-corpus benchmark, independent gold receipt, 2k/4k/8k token profiles and exact source/capsule contracts; explicitly limited measurement coverage.
 - [`EXTERNALIZATION_V0.md`](EXTERNALIZATION_V0.md) — Phase-1 content-addressed oversized-result externalization, bounded reread and search boundary.
+- [`H01_COMPONENT_CONTRACT.md`](H01_COMPONENT_CONTRACT.md) — Phase 1-3 public APIs for incremental source identity, lexical/structural retrieval, exact reopen and budgeted Context Compiler.
+- [`H01_EVALUATION.md`](H01_EVALUATION.md) — frozen public baseline comparison with development/held-out separation and measured source exposure.
 
-Their exact implementation/tests are authoritative for claims made by those candidates. They do not imply that the daemon, MCP surface, Context Compiler, memory backend, retention policy or production integration exists.
+Their exact implementation/tests are authoritative for claims made by those candidates. They do not imply that the daemon, MCP surface, memory backend, automatic retention/GC policy or production integration exists.
 
 ## Status vocabulary
 

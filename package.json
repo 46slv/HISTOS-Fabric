@@ -3,10 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tools/bench/lexical-baseline.test.mjs tools/bench/externalization-measure.test.mjs tools/bench/benchmark-externalization.test.mjs tools/bench/benchmark-externalization-cli.test.mjs tools/externalize/artifact-store.test.mjs tools/bench/frozen-benchmark.test.mjs",
+    "test": "node --test tools/bench/lexical-baseline.test.mjs tools/bench/externalization-measure.test.mjs tools/bench/benchmark-externalization.test.mjs tools/bench/benchmark-externalization-cli.test.mjs tools/externalize/artifact-store.test.mjs tools/bench/frozen-benchmark.test.mjs tools/index/source-index.test.mjs tools/context/context-compiler.test.mjs tools/bench/h01-benchmark.test.mjs",
     "bench:baseline": "node tools/bench/lexical-baseline.mjs bench/synthetic-v0.json",
     "bench:joint": "node tools/bench/benchmark-externalization-cli.mjs bench/synthetic-v0.json",
-    "bench:frozen": "node tools/bench/frozen-benchmark.mjs bench/public-gold-v1.json bench/public-gold-freeze-v1.json"
+    "bench:frozen": "node tools/bench/frozen-benchmark.mjs bench/public-gold-v1.json bench/public-gold-freeze-v1.json",
+    "bench:h01": "node tools/bench/h01-benchmark.mjs bench/public-gold-v1.json bench/public-gold-freeze-v1.json bench/evidence/public-baseline-v1-portable.json"
   },
   "dependencies": {
     "js-tiktoken": "1.0.21"

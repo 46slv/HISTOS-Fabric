@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, symlink, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, realpath, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -74,7 +74,10 @@ test('realpath containment refuses a symlinked corpus escape', async () => {
   await writeFile(path.join(outside, 'secret.txt'), 'secret alpha\n', 'utf8');
   // Directory junctions exercise the same realpath escape on Windows without
   // requiring global Developer Mode or symlink privileges.
-  await symlink(outside, path.join(dir, 'fixtures', 'linked'), process.platform === 'win32' ? 'junction' : 'dir');
+  // Packaged Windows processes can map LocalAppData to a physical LocalCache
+  // path. Point the junction at that canonical physical target so the fixture
+  // exercises a real readable escape instead of a dangling logical target.
+  await symlink(await realpath(outside), path.join(dir, 'fixtures', 'linked'), process.platform === 'win32' ? 'junction' : 'dir');
   const suite = {
     schema: 'histos.benchmark-suite/v0',
     suite_id: 'symlink-escape',
