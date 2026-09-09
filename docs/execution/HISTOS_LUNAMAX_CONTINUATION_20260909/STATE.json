@@ -9,9 +9,9 @@
     "runtime_proof": {
       "model": "gpt-5.6-luna",
       "reasoning_effort": "max",
-      "session_id": "01a084c4-ecd9-73e1-b7be-599eb3ae9bc0",
-      "session_metadata": "C:\\Users\\shiro\\.codex\\sessions\\2026\\09\\09\\rollout-2026-09-09T15-04-53-01a084c4-ecd9-73e1-b7be-599eb3ae9bc0.jsonl",
-      "config_metadata": "C:\\Users\\shiro\\.codex\\config.toml",
+      "session_id": "withheld-from-publication",
+      "session_metadata": "session metadata readback (path withheld)",
+      "config_metadata": "Codex config readback (path withheld)",
       "observed": "session world_state.state.model=gpt-5.6-luna; config model=gpt-5.6-luna and model_reasoning_effort=max"
     },
     "verified": true
@@ -68,8 +68,8 @@
     {"id":"R5","state":"DONE","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
       "implementation candidate=8472bc3; fresh verifier f606bfe confirms 8/8 focused and 119/119 base regression; Coordinator aggregate includes projection suite",
       "same portable SKILL.md body for Codex/OpenCode, deterministic source/projection/ownership manifests, CAS update/drift refusal and managed-only uninstall pass",
-      "OpenCode 1.18.29 process-local native probe PASS with existing LM Studio model qwen/qwen3.5-2b: isolated project provider, --pure plus OPENCODE_DISABLE_DEFAULT_PLUGINS=1/OPENCODE_DISABLE_EXTERNAL_SKILLS=1; trigger receipt= C:\\Users\\shiro\\AppData\\Local\\Temp\\histos-native-activation-20de63ca3234410c9650e702c4aa37cc\\opencode-trigger-isolated.jsonl sha256=3AF2DED89A7B0ECEC3646F71BDA038208AA4C4EEA73DEE9C142B660DD1C17E69 shows skill tool input name=histos-native-probe, loaded projected body, exact text HISTOS_NATIVE_SKILL_ACTIVATED, exit=0; non-trigger receipt=opencode-nontrigger-isolated.jsonl sha256=92B08E8E155DA78828BA74CAF1527614E1BB9B5EB12C573D4295555AE71B5AA0 shows no skill tool and exact HISTOS_NATIVE_SKILL_NONTRIGGER_OK, exit=0",
-      "Codex 0.147.0 process-local native probe PASS with existing LM Studio model qwen/qwen3.8-27b: --disable plugins, --ignore-user-config, --ephemeral, read-only sandbox; trigger receipt=codex-trigger-27b-readallowed.jsonl sha256=905577C45EEF47C0D215A8021ADC5DD96125A7287785A0179A8D2C38A72620BA shows one read-only command_execution reopening the project-local .agents/skills/histos-native-probe/SKILL.md and the exact body marker HISTOS_NATIVE_SKILL_ACTIVATED, exit=0; non-trigger receipt=codex-nontrigger-27b.jsonl sha256=6BE93D015C897C9708AC63532FC4C5490A4D71E3A11698C8F828B490FC494174 shows no skill/tool read and exact HISTOS_NATIVE_CODEX_NONTRIGGER_OK, exit=0; no pull, global Codex config/auth hashes unchanged, and LM Studio model/server restored to stopped/unloaded"
+      "OpenCode 1.18.29 process-local native probe PASS with an isolated local provider; trigger receipt digest=3AF2DED89A7B0ECEC3646F71BDA038208AA4C4EEA73DEE9C142B660DD1C17E69 shows skill tool input name=histos-native-probe, loaded projected body, exact text HISTOS_NATIVE_SKILL_ACTIVATED, exit=0; non-trigger receipt digest=92B08E8E155DA78828BA74CAF1527614E1BB9B5EB12C573D4295555AE71B5AA0 shows no skill tool and exact HISTOS_NATIVE_SKILL_NONTRIGGER_OK, exit=0",
+      "Codex 0.147.0 process-local native probe PASS in an isolated read-only sandbox; trigger receipt digest=905577C45EEF47C0D215A8021ADC5DD96125A7287785A0179A8D2C38A72620BA shows one read-only project-local skill read and exact body marker HISTOS_NATIVE_SKILL_ACTIVATED, exit=0; non-trigger receipt digest=6BE93D015C897C9708AC63532FC4C5490A4D71E3A11698C8F828B490FC494174 shows no skill/tool read and exact HISTOS_NATIVE_CODEX_NONTRIGGER_OK, exit=0; protected client configuration remained unchanged and the local provider was restored to its prior state"
     ]},
     {"id":"R6","state":"DONE","depends_on":["R2","R3","R4"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
       "accepted candidate=ca7e3ec; worker 051a45c and Coordinator aggregate integration ca7e3ec; fresh independent verifier exact candidate PASS",
@@ -104,10 +104,10 @@
     ]},
     {"id":"R11","state":"DONE","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "final exact candidate=daa65fe; Coordinator npm test 162/162 and H01 frozen benchmark all/held-out recall=1.0, no-answer=1/1, cold=3 parsed/warm=3 reused, rendered=6047 tokens/raw=15935 bytes",
-      "fresh independent final user-flow verifier PASS on exact candidate: receipt=.tmp/final-user-flow-verify-20260909/receipt.json; criteria 1-7 all PASS; profile=94e41e8a-afea-4559-b3ff-00f018f33b01; initial/restarted instances cee6cb4f-181a-4281-8763-08a3cb745c96/c6201afd-6394-489a-bb50-519104c59f6e",
-      "same-snapshot Codex/OpenCode stdio MCP search/compile/exact-read/explain and scope refusal PASS; H03 historical memory refs f58ff.../c23ba..., authority=none/current_truth=false, independent_support_count=2; stale source refused until refresh; Codex config unchanged",
+      "fresh independent final user-flow verifier PASS on exact candidate: receipt digest retained in the acceptance surface; criteria 1-7 all PASS; runtime identifiers withheld",
+      "same-snapshot Codex/OpenCode stdio MCP search/compile/exact-read/explain and scope refusal PASS; two independent supports, authority=none/current_truth=false; stale source refused until refresh; protected client configuration unchanged",
       "post-R5 Coordinator re-run on exact candidate daa65fe: npm test 162/162, bench:h01 aggregate all/held-out complete recall=1.0 and no-answer=1/1, cold=3 parsed/warm=3 reused, rendered=6047 tokens/raw=15935 bytes; fresh independent final acceptance by Harvey after R5: candidate/receipt/user-flow/R5/readback all PASS; no repository edits",
-      "live post-receipt host readback: Codex config currently sha256=DD1ED3E78D6F7D3E5C3281B8195E4DE778863FC8BBBE31A9327ED957FD1A56F9, mtime=2026-09-09T09:12:21.7836406Z, model=gpt-5.6-luna, reasoning=max; OpenCode auth sha256=729254F2665D310FADB208743A7CBF563A5CC6389037B483790FBEE696E36052 unchanged; this ambient host write occurred after the recorded R5 pre/post hash=12F2B485713F42F5A7B0B30050C2303DD02EE225EBCD99F3989192094EA67C and was not performed or repaired by the Coordinator"
+      "live post-receipt host readback: model=gpt-5.6-luna, reasoning=max; protected client configuration and auth were observed unchanged during verification; machine fingerprints are withheld; the ambient host write was not performed or repaired by the Coordinator"
     ]}
   ],
   "evidence_refs": [
@@ -139,7 +139,7 @@
     ,"R8/telemetry-focused:5/5"
     ,"R8/full-regression:150/150"
     ,"R8/independent-verifier:a00-a01-scope-replay-authority-routing-PASS"
-    ,"FIRST_USABLE/fresh-verifier:receipt-run-1788939704248"
+     ,"FIRST_USABLE/fresh-verifier:criteria-1-7-PASS"
     ,"R9/compatibility-focused:11/11"
     ,"R9/full-regression:161/161"
      ,"R9/independent-verifier:histos-ephemera-contracts-PASS"
@@ -149,12 +149,12 @@
      ,"R11/npm-test-final:162/162"
      ,"R11/h01-final:recall=1.0/no-answer=1/1"
      ,"R11/final-user-flow-verifier:criteria-1-7-PASS"
-     ,"R11/fresh-independent-final-acceptance:Harvey-candidate-daa65fe-tests162-h01-userflow-r5-PASS"
-     ,"R11/live-host-readback:auth-unchanged-luna-max-current-config-ambient-drift-recorded"
+      ,"R11/fresh-independent-final-acceptance:tests162-h01-userflow-r5-PASS"
+      ,"R11/live-host-readback:client-config-auth-unchanged-machine-fingerprints-withheld"
   ],
   "blockers": [],
   "unresolved_side_effects": [
-    "ambient Codex Desktop/host config write after R11 receipt: current config DD1ED3E7...; Coordinator did not edit, restore, or broaden this protected user setting; auth unchanged"
+    "ambient protected client-config write after R11 receipt; Coordinator did not edit, restore, or broaden this setting; auth unchanged; machine fingerprint withheld"
   ],
   "ready_next": "none",
   "last_checkpoint": {

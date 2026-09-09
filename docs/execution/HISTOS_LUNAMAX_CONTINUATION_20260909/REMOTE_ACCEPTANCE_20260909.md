@@ -63,7 +63,7 @@ The following are immutable receipt readbacks from the accepted R5/R9/R10 eviden
 
 The landing Coordinator's fresh Codex session metadata, not prompt text, records:
 
-- session `01a08580-cfb4-7243-974a-376496888858`, provider `openai`, origin `Codex Desktop`;
+- opaque session identifier withheld from publication; provider `openai`, origin `Codex Desktop`;
 - session-meta provenance model `gpt-5.6-luna`;
 - turn-context model `gpt-5.6-luna`, effort `max`, and collaboration settings `model=gpt-5.6-luna`, `reasoning_effort=max`;
 - the active config readback also reports `model = "gpt-5.6-luna"` and `model_reasoning_effort = "max"`.
