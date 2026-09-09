@@ -26,7 +26,7 @@
     "research_synthesis_pr": 4,
     "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
   },
-  "active_task": "R3",
+  "active_task": "R4,R5,R7",
   "tasks": [
     {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
@@ -50,7 +50,14 @@
       "full repository regression on accepted candidate: npm test 114/114 pass, 0 fail, 0 skipped; git diff --check PASS",
       "journal remains bounded in-memory ingest/read model; H03/H04/A00 projections explicitly authority=none/current_truth=false and A00 activation unauthorized"
     ]},
-    {"id":"R3","state":"PENDING","depends_on":["R1","R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R3","state":"DONE","depends_on":["R1","R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=c8d8aa6; provider boundary worker 88a2fff and Coordinator whitespace fix integrated; main worktree clean after regression",
+      "provider descriptor/admission/registry covers RetrievalProvider, MemoryProvider, DistillationProvider and ProjectionProvider with id/version/capabilities/privacy-egress/grounding-lineage/scope/status",
+      "fresh independent verifier matrix: 16 rejection probes pass for egress, secrets, grounding, metadata authority, capabilities, unsafe scope, privileged operations, unsupported operations and unsafe result fields",
+      "native H01 search+compile and H03 read/recall raw payloads remain byte/deep-equal through the provider envelope; wrapper authority=none and current_truth=false",
+      "focused provider tests: 5/5 pass; full repository regression on accepted candidate: npm test 119/119 pass, 0 fail, 0 skipped",
+      "no Kura dependency, provider write/admin operation or Mission transition moved into HISTOS; R4/R5/R6 remain separate"
+    ]},
     {"id":"R4","state":"PENDING","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
     {"id":"R5","state":"PENDING","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
     {"id":"R6","state":"PENDING","depends_on":["R2","R3","R4"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
@@ -70,14 +77,17 @@
     "R1/focused-host-regression:29/29",
     "R2/evidence-event-focused:8/8",
     "R2/full-regression:114/114",
-    "R2/independent-verifier:replay-scope-privacy-telemetry-PASS"
+    "R2/independent-verifier:replay-scope-privacy-telemetry-PASS",
+    "R3/provider-focused:5/5",
+    "R3/full-regression:119/119",
+    "R3/independent-verifier:16-rejection-probes-plus-native-pass-through-PASS"
   ],
   "blockers": [],
   "unresolved_side_effects": [],
-  "ready_next": "R3: define provider interfaces and native candidate-zero adapters over existing H01/H03 behavior; fail closed on unsupported operations.",
+  "ready_next": "R4 + R5 + R7: independently implement read-only Kura comparison, portable Agent Skill projection, and friction/capture replay in isolated worktrees.",
   "last_checkpoint": {
-    "at": "2026-09-09T15:42:00+09:00",
-    "kind": "R2_ACCEPTED",
-    "candidate_sha": "89b86489fa174b65ab007a6dc3d2e7071a244324"
+    "at": "2026-09-09T15:54:00+09:00",
+    "kind": "R3_ACCEPTED",
+    "candidate_sha": "c8d8aa6bcc85045ed006e20eadda916e20847b24"
   }
 }
