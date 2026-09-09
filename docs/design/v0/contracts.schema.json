@@ -1,0 +1,417 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:histos:design:v0-draft",
+  "title": "HISTOS draft wire subset (shape validation, not authorization)",
+  "description": "Design artifact only. No runtime protocol is implemented or certified by this schema. Semantic, authorization, token-count and integrity checks remain required.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/compile_request"
+    },
+    {
+      "$ref": "#/$defs/context_capsule"
+    },
+    {
+      "$ref": "#/$defs/capture_candidate"
+    }
+  ],
+  "$defs": {
+    "compile_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "histos.context.compile.request/v0-draft"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "scope_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "snapshot_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "freshness": {
+          "enum": [
+            "snapshot",
+            "require_current"
+          ]
+        },
+        "max_capsule_tokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 256,
+          "maximum": 1048576
+        },
+        "tokenizer_profile": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        }
+      },
+      "required": [
+        "schema",
+        "request_id",
+        "scope_id",
+        "snapshot_id",
+        "purpose",
+        "freshness",
+        "max_capsule_tokens",
+        "max_output_bytes",
+        "tokenizer_profile"
+      ]
+    },
+    "context_capsule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "histos.context.capsule/v0-draft"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "scope_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "snapshot_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "status": {
+          "enum": [
+            "ready",
+            "partial",
+            "insufficient_budget",
+            "stale"
+          ]
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max_tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "model_visible_tokens": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "measurement": {
+              "enum": [
+                "exact",
+                "estimate",
+                "unknown"
+              ]
+            },
+            "tokenizer_profile": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "max_tokens",
+            "model_visible_tokens",
+            "measurement",
+            "tokenizer_profile"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "measurement": {
+                    "const": "unknown"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "model_visible_tokens": {
+                    "type": "null"
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "model_visible_tokens": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "measurement": {
+                    "const": "exact"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "tokenizer_profile": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "rendered_context": {
+          "type": "string",
+          "maxLength": 262144
+        },
+        "selection_receipt_ref": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "item_id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+              },
+              "kind": {
+                "enum": [
+                  "source",
+                  "evidence",
+                  "recalled_memory",
+                  "compiled",
+                  "hypothesis"
+                ]
+              },
+              "source_ref": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+              },
+              "source_digest": {
+                "type": "string",
+                "pattern": "^sha256:[0-9a-f]{64}$"
+              },
+              "representation": {
+                "enum": [
+                  "signature",
+                  "excerpt",
+                  "summary",
+                  "reference"
+                ]
+              },
+              "provenance_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+                },
+                "maxItems": 32,
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "item_id",
+              "kind",
+              "source_ref",
+              "source_digest",
+              "representation",
+              "provenance_refs"
+            ]
+          },
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "missing_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "schema",
+        "request_id",
+        "scope_id",
+        "snapshot_id",
+        "policy_revision",
+        "status",
+        "budget",
+        "rendered_context",
+        "selection_receipt_ref",
+        "items",
+        "missing_context",
+        "warnings"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "insufficient_budget",
+                  "stale"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "items": {
+                "maxItems": 0
+              },
+              "rendered_context": {
+                "maxLength": 0
+              },
+              "missing_context": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "partial"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "missing_context": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "capture_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "histos.memory.capture-candidate.request/v0-draft"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "scope_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "memory_type": {
+          "enum": [
+            "episode",
+            "semantic",
+            "failure",
+            "procedure",
+            "decision_reference"
+          ]
+        },
+        "claim": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "origin_kind": {
+          "enum": [
+            "reported_observation",
+            "interpretation",
+            "correction"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._:-]{0,127}$"
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "schema",
+        "request_id",
+        "scope_id",
+        "idempotency_key",
+        "expected_revision",
+        "memory_type",
+        "claim",
+        "origin_kind",
+        "evidence_refs",
+        "limitations"
+      ]
+    }
+  }
+}
