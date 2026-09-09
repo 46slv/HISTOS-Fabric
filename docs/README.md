@@ -4,6 +4,10 @@ Status: **BOOTSTRAP / RESEARCH ROUTER**
 
 This directory records the current target boundary, ecosystem relationships, research basis and development goals for HISTOS-Fabric. Documentation must distinguish future intent from implemented/runtime-proven behavior.
 
+## Detailed v0 design
+
+Start with [`design/v0/README.md`](design/v0/README.md) when preparing implementation: process/API boundaries, integration grades, data ownership/recovery, scope/privacy, memory/consolidation, proposed wire schemas and H0-H9 delivery gates. Read only the relevant owner documents. The package is **DRAFT DESIGN**, not accepted architecture or a working runtime; static fixture validation is separate from runtime conformance.
+
 ## Read first
 
 1. [`ARCHITECTURE.md`](ARCHITECTURE.md)
@@ -57,6 +61,7 @@ Their exact implementation/tests are authoritative for claims made by those cand
 | Status | Meaning |
 | --- | --- |
 | `IMPLEMENTED` | Exists in HISTOS code and has named tests/runtime evidence. |
+| `DRAFT DESIGN` | Concrete proposal and contract fixtures; not accepted or implemented. |
 | `ACCEPTED DESIGN` | Design/contract is approved but may not yet be fully implemented. |
 | `TARGET ARCHITECTURE` | Intended direction; implementation may be partial or absent. |
 | `BOOTSTRAP` | Repository/contract setup before a stable runtime exists. |
