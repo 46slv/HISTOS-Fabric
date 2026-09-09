@@ -96,6 +96,12 @@ test('scope, stale snapshot, label authority and gold-label leakage fail closed'
   const leaked = fixture();
   leaked.records[0].event.reusable = true;
   assert.throws(() => normalizeFrictionReplayFixture(leaked), /REPLAY_EVENT_GOLD_LABEL_LEAK/);
+  const nestedLeaked = fixture();
+  nestedLeaked.records[0].event.metadata = { heldOutLabel: { reusable: true } };
+  assert.throws(() => normalizeFrictionReplayFixture(nestedLeaked), /REPLAY_EVENT_GOLD_LABEL_LEAK/);
+  const camelAuthority = fixture();
+  camelAuthority.records[0].label.currentTruth = false;
+  assert.throws(() => normalizeFrictionReplayFixture(camelAuthority), /REPLAY_LABEL_AUTHORITY_MUTATION/);
   const authorityEvent = fixture();
   authorityEvent.records[0].event.current_truth = true;
   assert.throws(() => normalizeFrictionReplayFixture(authorityEvent), /EVENT_AUTHORITY_MUTATION/);

@@ -69,15 +69,32 @@ function normalizeScope(input) {
   return { scope_id };
 }
 
+function normalizedFieldKey(key) {
+  return String(key).replace(/([a-z])([A-Z])/gu, '$1_$2').toLowerCase().replaceAll('-', '_');
+}
+
+function walkObjectKeys(value, visitor, seen = new Set()) {
+  if (!value || typeof value !== 'object' || seen.has(value)) return;
+  seen.add(value);
+  if (Array.isArray(value)) {
+    value.forEach(item => walkObjectKeys(item, visitor, seen));
+    return;
+  }
+  for (const [key, nested] of Object.entries(value)) {
+    visitor(normalizedFieldKey(key));
+    walkObjectKeys(nested, visitor, seen);
+  }
+}
+
 function rejectLabelAuthority(label) {
   if (!label || typeof label !== 'object' || Array.isArray(label)) fail('REPLAY_LABEL_INVALID');
   const forbidden = new Set([
     'authority', 'current_truth', 'verified', 'active', 'activation', 'permission', 'proof',
     'support', 'mission_state', 'status', 'retention', 'credential', 'secret', 'transcript',
   ]);
-  for (const key of Object.keys(label)) {
-    if (forbidden.has(key.toLowerCase())) fail('REPLAY_LABEL_AUTHORITY_MUTATION');
-  }
+  walkObjectKeys(label, key => {
+    if (forbidden.has(key)) fail('REPLAY_LABEL_AUTHORITY_MUTATION');
+  });
 }
 
 function normalizeLabel(input) {
@@ -103,9 +120,9 @@ function assertNoGoldLabelLeak(event) {
     'reusable', 'reusable_outcome', 'candidate_quality', 'quality_score', 'distill_cost_units',
     'cost_units', 'gold', 'label', 'expected_route', 'held_out_label',
   ]);
-  for (const key of Object.keys(event)) {
-    if (leakKeys.has(key.toLowerCase())) fail('REPLAY_EVENT_GOLD_LABEL_LEAK');
-  }
+  walkObjectKeys(event, key => {
+    if (leakKeys.has(key)) fail('REPLAY_EVENT_GOLD_LABEL_LEAK');
+  });
 }
 
 function normalizeRecord(record, fixtureScope, index) {
