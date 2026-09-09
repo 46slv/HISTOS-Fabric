@@ -2,7 +2,7 @@
   "schema": "histos.autonomous-continuation-state/v1",
   "plan_id": "HISTOS_LUNAMAX_CONTINUATION_20260909",
   "goal_id": "HISTOS-V1-OPERATIONAL-LOOP",
-  "program_status": "CHECKPOINTED",
+  "program_status": "PROGRAM_DONE",
   "first_usable": "PASS",
   "coordinator": {
     "required_model": "Luna Max",
@@ -26,7 +26,7 @@
     "research_synthesis_pr": 4,
     "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
   },
-  "active_task": "R5",
+  "active_task": "R11",
   "tasks": [
     {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
@@ -65,10 +65,11 @@
       "quote/evidence floor rejects STORE_ECHO and QUOTE_NOT_FOUND; scope paths, snapshot, upstream repository/version/commit and optional evidence SHA-256 are bound fail-closed",
       "focused Kura tests: 6/6 pass after hardening; full aggregate later includes suite; no paid/model/pytest run by design and H03 remains trust boundary"
     ]},
-    {"id":"R5","state":"WAITING","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+    {"id":"R5","state":"DONE","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
       "implementation candidate=8472bc3; fresh verifier f606bfe confirms 8/8 focused and 119/119 base regression; Coordinator aggregate includes projection suite",
       "same portable SKILL.md body for Codex/OpenCode, deterministic source/projection/ownership manifests, CAS update/drift refusal and managed-only uninstall pass",
-      "activation evidence intentionally remains NOT_RUN; actual Codex/OpenCode trigger/non-trigger host proof is not claimed"
+      "OpenCode 1.18.29 process-local native probe PASS with existing LM Studio model qwen/qwen3.5-2b: isolated project provider, --pure plus OPENCODE_DISABLE_DEFAULT_PLUGINS=1/OPENCODE_DISABLE_EXTERNAL_SKILLS=1; trigger receipt= C:\\Users\\shiro\\AppData\\Local\\Temp\\histos-native-activation-20de63ca3234410c9650e702c4aa37cc\\opencode-trigger-isolated.jsonl sha256=3AF2DED89A7B0ECEC3646F71BDA038208AA4C4EEA73DEE9C142B660DD1C17E69 shows skill tool input name=histos-native-probe, loaded projected body, exact text HISTOS_NATIVE_SKILL_ACTIVATED, exit=0; non-trigger receipt=opencode-nontrigger-isolated.jsonl sha256=92B08E8E155DA78828BA74CAF1527614E1BB9B5EB12C573D4295555AE71B5AA0 shows no skill tool and exact HISTOS_NATIVE_SKILL_NONTRIGGER_OK, exit=0",
+      "Codex 0.147.0 process-local native probe PASS with existing LM Studio model qwen/qwen3.8-27b: --disable plugins, --ignore-user-config, --ephemeral, read-only sandbox; trigger receipt=codex-trigger-27b-readallowed.jsonl sha256=905577C45EEF47C0D215A8021ADC5DD96125A7287785A0179A8D2C38A72620BA shows one read-only command_execution reopening the project-local .agents/skills/histos-native-probe/SKILL.md and the exact body marker HISTOS_NATIVE_SKILL_ACTIVATED, exit=0; non-trigger receipt=codex-nontrigger-27b.jsonl sha256=6BE93D015C897C9708AC63532FC4C5490A4D71E3A11698C8F828B490FC494174 shows no skill/tool read and exact HISTOS_NATIVE_CODEX_NONTRIGGER_OK, exit=0; no pull, global Codex config/auth hashes unchanged, and LM Studio model/server restored to stopped/unloaded"
     ]},
     {"id":"R6","state":"DONE","depends_on":["R2","R3","R4"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
       "accepted candidate=ca7e3ec; worker 051a45c and Coordinator aggregate integration ca7e3ec; fresh independent verifier exact candidate PASS",
@@ -101,11 +102,12 @@
       "report schema histos.recovery-security-regression/v1 status PASS with seven probes: service drift/restart/refresh; event replay/scope/privacy/authority; provider/H04 recovery; Kura read/admin/raw immutability/stale refresh; Skill CAS/path/ownership/uninstall; R8 A00/A01; R9 H05",
       "no network/model/paid calls; all recovery/security refusal codes and transition_calls=0 independently observed"
     ]},
-    {"id":"R11","state":"WAITING","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
+    {"id":"R11","state":"DONE","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "final exact candidate=daa65fe; Coordinator npm test 162/162 and H01 frozen benchmark all/held-out recall=1.0, no-answer=1/1, cold=3 parsed/warm=3 reused, rendered=6047 tokens/raw=15935 bytes",
       "fresh independent final user-flow verifier PASS on exact candidate: receipt=.tmp/final-user-flow-verify-20260909/receipt.json; criteria 1-7 all PASS; profile=94e41e8a-afea-4559-b3ff-00f018f33b01; initial/restarted instances cee6cb4f-181a-4281-8763-08a3cb745c96/c6201afd-6394-489a-bb50-519104c59f6e",
       "same-snapshot Codex/OpenCode stdio MCP search/compile/exact-read/explain and scope refusal PASS; H03 historical memory refs f58ff.../c23ba..., authority=none/current_truth=false, independent_support_count=2; stale source refused until refresh; Codex config unchanged",
-      "R11 cannot close PROGRAM_DONE while R5 native Codex/OpenCode activation remains NOT_RUN; no local model pull or provider/config change authorized"
+      "post-R5 Coordinator re-run on exact candidate daa65fe: npm test 162/162, bench:h01 aggregate all/held-out complete recall=1.0 and no-answer=1/1, cold=3 parsed/warm=3 reused, rendered=6047 tokens/raw=15935 bytes; fresh independent final acceptance by Harvey after R5: candidate/receipt/user-flow/R5/readback all PASS; no repository edits",
+      "live post-receipt host readback: Codex config currently sha256=DD1ED3E78D6F7D3E5C3281B8195E4DE778863FC8BBBE31A9327ED957FD1A56F9, mtime=2026-09-09T09:12:21.7836406Z, model=gpt-5.6-luna, reasoning=max; OpenCode auth sha256=729254F2665D310FADB208743A7CBF563A5CC6389037B483790FBEE696E36052 unchanged; this ambient host write occurred after the recorded R5 pre/post hash=12F2B485713F42F5A7B0B30050C2303DD02EE225EBCD99F3989192094EA67C and was not performed or repaired by the Coordinator"
     ]}
   ],
   "evidence_refs": [
@@ -126,7 +128,9 @@
     "R4/equal-scope-report:recall=1.0-descent=1.0-restart=PASS-stale=PASS-readonly=PASS",
     "R4/independent-verifier:pinned-readonly-quote-echo-scope-PASS",
     "R5/projection-focused:8/8",
-    "R5/independent-verifier:CAS-drift-managed-uninstall-path-guards-PASS-activation-NOT_RUN",
+    "R5/independent-verifier:CAS-drift-managed-uninstall-path-guards-PASS",
+    "R5/opencode-native-activation:trigger-and-nontrigger-PASS-exit0-skill-tool-body-marker",
+    "R5/codex-native-activation:project-local-body-read-exact-marker-and-nontrigger-PASS",
     "R7/replay-focused:5/5",
     "R7/independent-verifier:heldout-routes-budgets-scope-utility-only-PASS",
     "R6/distillation-focused:7/7",
@@ -145,15 +149,17 @@
      ,"R11/npm-test-final:162/162"
      ,"R11/h01-final:recall=1.0/no-answer=1/1"
      ,"R11/final-user-flow-verifier:criteria-1-7-PASS"
+     ,"R11/fresh-independent-final-acceptance:Harvey-candidate-daa65fe-tests162-h01-userflow-r5-PASS"
+     ,"R11/live-host-readback:auth-unchanged-luna-max-current-config-ambient-drift-recorded"
   ],
-  "blockers": [
-    "R5 activation proof NOT_RUN: no local LM Studio/Ollama model is available on this host; do not claim Codex/OpenCode trigger PASS until a process-local native client probe succeeds"
+  "blockers": [],
+  "unresolved_side_effects": [
+    "ambient Codex Desktop/host config write after R11 receipt: current config DD1ED3E7...; Coordinator did not edit, restore, or broaden this protected user setting; auth unchanged"
   ],
-  "unresolved_side_effects": [],
-  "ready_next": "R5: obtain an authorized process-local native Codex/OpenCode skill activation proof with an available local model (no auto-pull); then rerun R11 on the resulting candidate.",
+  "ready_next": "none",
   "last_checkpoint": {
-    "at": "2026-09-09T17:27:00+09:00",
-    "kind": "R11_CHECKPOINT_R5_ACTIVATION_NOT_RUN",
+    "at": "2026-09-09T18:20:11+09:00",
+    "kind": "PROGRAM_DONE",
     "candidate_sha": "daa65fefa1e4b0222356e664556d87e3f8bf4d14"
   }
 }
