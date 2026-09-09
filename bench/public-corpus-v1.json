@@ -1,0 +1,46 @@
+{
+  "schema": "histos.source-manifest/v1",
+  "corpus_id": "public-chatgpt-mcp-v1",
+  "status": "DRAFT_AWAITING_INDEPENDENT_FREEZE",
+  "provenance": {
+    "visibility": "public",
+    "method": "exact git show bytes; no source execution",
+    "license": "No LICENSE file or package license field present at this revision; author-owned public repository reuse authorized for this program",
+    "source_authority": "upstream Git commit; snapshot is retrieval material, never operational authority"
+  },
+  "sources": [
+    {
+      "path": "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+      "repository": "https://github.com/46slv/chatgpt-mcp",
+      "commit": "d353159c6a9e7622603819b608422169c9a1f9d4",
+      "source_path": "tools/devexec-heartbeat-scheduler.mjs",
+      "git_blob": "857486953112897e1011a63d70e29aa4c3ed2fd0",
+      "sha256": "e7acdedf5ac0cbd04d7440f9075f5b908d05b4470c0e50101b03a50d1af9b6dc",
+      "bytes": 2679,
+      "line_count": 68,
+      "source_url": "https://github.com/46slv/chatgpt-mcp/blob/d353159c6a9e7622603819b608422169c9a1f9d4/tools/devexec-heartbeat-scheduler.mjs"
+    },
+    {
+      "path": "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+      "repository": "https://github.com/46slv/chatgpt-mcp",
+      "commit": "d353159c6a9e7622603819b608422169c9a1f9d4",
+      "source_path": "tools/devexec-goal.mjs",
+      "git_blob": "e4a93780be00ad3e99c1e2790f5cb5cdd2c98134",
+      "sha256": "846802978f55f836e26edeb27ed7f9f8a3c8861b412588a397d792082d8cb1f7",
+      "bytes": 2375,
+      "line_count": 48,
+      "source_url": "https://github.com/46slv/chatgpt-mcp/blob/d353159c6a9e7622603819b608422169c9a1f9d4/tools/devexec-goal.mjs"
+    },
+    {
+      "path": "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs",
+      "repository": "https://github.com/46slv/chatgpt-mcp",
+      "commit": "d353159c6a9e7622603819b608422169c9a1f9d4",
+      "source_path": "tools/devexec-context-governor.mjs",
+      "git_blob": "41b0cf3c3c3482aeeb6b0acf280c72da0012f14c",
+      "sha256": "7b97b3ac7a9b2fa202cb20abb18bcb9649b79a6872f2ad26ea3e3bef7c895dda",
+      "bytes": 2393,
+      "line_count": 5,
+      "source_url": "https://github.com/46slv/chatgpt-mcp/blob/d353159c6a9e7622603819b608422169c9a1f9d4/tools/devexec-context-governor.mjs"
+    }
+  ]
+}

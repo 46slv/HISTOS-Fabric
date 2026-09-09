@@ -1,0 +1,165 @@
+{
+  "schema": "histos.autonomous-continuation-state/v1",
+  "plan_id": "HISTOS_LUNAMAX_CONTINUATION_20260909",
+  "goal_id": "HISTOS-V1-OPERATIONAL-LOOP",
+  "program_status": "PROGRAM_DONE",
+  "first_usable": "PASS",
+  "coordinator": {
+    "required_model": "Luna Max",
+    "runtime_proof": {
+      "model": "gpt-5.6-luna",
+      "reasoning_effort": "max",
+      "session_id": "01a084c4-ecd9-73e1-b7be-599eb3ae9bc0",
+      "session_metadata": "C:\\Users\\shiro\\.codex\\sessions\\2026\\09\\09\\rollout-2026-09-09T15-04-53-01a084c4-ecd9-73e1-b7be-599eb3ae9bc0.jsonl",
+      "config_metadata": "C:\\Users\\shiro\\.codex\\config.toml",
+      "observed": "session world_state.state.model=gpt-5.6-luna; config model=gpt-5.6-luna and model_reasoning_effort=max"
+    },
+    "verified": true
+  },
+  "starting_lineage": {
+    "repository": "46slv/HISTOS-Fabric",
+    "execution_base_ref": "program/ephemera-full-20260908-delivery",
+    "execution_base_sha": "ff4a68beaa4094acfbd35b70d49f986f712f9d30",
+    "plan_branch": "execution/histos-lunamax-continuation-20260909",
+    "test_aggregate_candidate_pr": 3,
+    "test_aggregate_candidate_sha": "5135ef4e65f906534d7348797b2a06481394667d",
+    "research_synthesis_pr": 4,
+    "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
+  },
+  "active_task": "R11",
+  "tasks": [
+    {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
+      "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
+      "remote refs fresh-read: execution branch fe51dd378101c3f52ff7e7bae3010bfb98332e81; PR3 5135ef4e65f906534d7348797b2a06481394667d; PR4 701de5ab01c9686e356a923c2ac6f9bdfd69e8a5",
+      "PR3 isolated host run: npm ci && npm test -> 106 tests, 106 pass, 0 fail, 0 skipped",
+      "PR3 structural aggregate coverage: actual=18 test suites, listed=18, missing=0, extra=0, duplicates=0",
+      "PR4 classification: Evidence Event=NEW CAPABILITY; provider registry/grounding/Kura=PROVIDER/ADAPTER (Kura comparison also BENCHMARK/QUALIFICATION); Agent Skill projection=NEW CAPABILITY; friction replay=BENCHMARK/QUALIFICATION; A00/A01 integration and H02/H03/H04 boundary preservation=HARDENING"
+    ]},
+    {"id":"R1","state":"DONE","depends_on":["R0"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
+      "Coordinator host regression on c1c264ccba5113022ce677591c8673814bfbdebb: npm test -> 106/106 pass, 0 fail, 0 skipped",
+      "H01 bench:h01: suite=public-chatgpt-mcp-v1; gold=146cc45d9ba119376fa7ec8feec838966bfcc9472e5da55da8127857f7a90ad6; manifest=fa4d2f0ecc33aef32720f38a40489e4166e2854dd25695a921db091a3ba377d2; freeze=3eea13213ead69b52b6b7e3b11c4690b77ccebdaf2be1ea6e0d11faa1c0c2903; snapshot=a4c14651a7c430a8d2c701b43eaaf3f16463e78f7ad9b62d451fe403a9cfb7ec; cold=3 parsed, warm=3 reused; all/held-out complete recall=1.0; no-answer=1/1; rendered=6047 tokens; raw=15935 bytes",
+      "H02/MCP focused transport: real stdio MCP handshake, four read-only tools, Codex/OpenCode client labels, scope/snapshot/path refusal, source drift + explicit refresh, controlled restart and telemetry -> PASS",
+      "H03/H04 focused regression: evidence-memory, compiled-understanding and bounded Sleep recovery/idempotency/suppression tests included in 29/29 focused pass",
+      "host identities: Node v24.14.1; Codex CLI 0.147.0; OpenCode 1.18.29; no global/user client configuration changed"
+    ]},
+    {"id":"R2","state":"DONE","depends_on":["R1"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=89b8648 cherry-picked from worker d5cf333b9cc91ad234ecfd4918baad5522fdac5b; Coordinator integration branch clean after full regression",
+      "provider-neutral histos.evidence-event/v1 normalizer with stable event/replay identity, bounded scope/snapshot/artifact lineage, privacy and non-authority controls",
+      "Codex/OpenCode/EPHEMERA/verifier adapters converge on the same normalized event shape; duplicate replay is idempotent and conflicting event IDs are refused",
+      "focused event suite: 8/8 pass; independent fresh verifier confirms replay, scope/stale, secret/transcript/control rejection, friction + smooth-positive routing, H03/H04/A00 projections",
+      "full repository regression on accepted candidate: npm test 114/114 pass, 0 fail, 0 skipped; git diff --check PASS",
+      "journal remains bounded in-memory ingest/read model; H03/H04/A00 projections explicitly authority=none/current_truth=false and A00 activation unauthorized"
+    ]},
+    {"id":"R3","state":"DONE","depends_on":["R1","R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=c8d8aa6; provider boundary worker 88a2fff and Coordinator whitespace fix integrated; main worktree clean after regression",
+      "provider descriptor/admission/registry covers RetrievalProvider, MemoryProvider, DistillationProvider and ProjectionProvider with id/version/capabilities/privacy-egress/grounding-lineage/scope/status",
+      "fresh independent verifier matrix: 16 rejection probes pass for egress, secrets, grounding, metadata authority, capabilities, unsafe scope, privileged operations, unsupported operations and unsafe result fields",
+      "native H01 search+compile and H03 read/recall raw payloads remain byte/deep-equal through the provider envelope; wrapper authority=none and current_truth=false",
+      "focused provider tests: 5/5 pass; full repository regression on accepted candidate: npm test 119/119 pass, 0 fail, 0 skipped",
+      "no Kura dependency, provider write/admin operation or Mission transition moved into HISTOS; R4/R5/R6 remain separate"
+    ]},
+    {"id":"R4","state":"DONE","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=1d0a62b; worker cf268c4 and Coordinator hardening 3743b1b integrated; pinned upstream distill-kura commit=33aec61dcd28076848bfdfa9dfdf5902300fe109",
+      "read-only MemoryProvider over explicit store/scope/snapshot with no Kura writes; direct remember/write/capture/distill/admin calls refuse at call boundary and raw store bytes remain unchanged",
+      "fresh verifier equal-scope/budget report: schema histos.kura-readonly-report/v1; 4 cases; Kura recall=2/2, false_recall=1/2, abstention=1/2, evidence descent=2/2, context_bytes=239, context_tokens=61, latency p50=1.0545ms/p95=1.1777ms/max=1.4495ms; baseline same cases; restart PASS; stale PASS; read-only PASS",
+      "quote/evidence floor rejects STORE_ECHO and QUOTE_NOT_FOUND; scope paths, snapshot, upstream repository/version/commit and optional evidence SHA-256 are bound fail-closed",
+      "focused Kura tests: 6/6 pass after hardening; full aggregate later includes suite; no paid/model/pytest run by design and H03 remains trust boundary"
+    ]},
+    {"id":"R5","state":"DONE","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "implementation candidate=8472bc3; fresh verifier f606bfe confirms 8/8 focused and 119/119 base regression; Coordinator aggregate includes projection suite",
+      "same portable SKILL.md body for Codex/OpenCode, deterministic source/projection/ownership manifests, CAS update/drift refusal and managed-only uninstall pass",
+      "OpenCode 1.18.29 process-local native probe PASS with existing LM Studio model qwen/qwen3.5-2b: isolated project provider, --pure plus OPENCODE_DISABLE_DEFAULT_PLUGINS=1/OPENCODE_DISABLE_EXTERNAL_SKILLS=1; trigger receipt= C:\\Users\\shiro\\AppData\\Local\\Temp\\histos-native-activation-20de63ca3234410c9650e702c4aa37cc\\opencode-trigger-isolated.jsonl sha256=3AF2DED89A7B0ECEC3646F71BDA038208AA4C4EEA73DEE9C142B660DD1C17E69 shows skill tool input name=histos-native-probe, loaded projected body, exact text HISTOS_NATIVE_SKILL_ACTIVATED, exit=0; non-trigger receipt=opencode-nontrigger-isolated.jsonl sha256=92B08E8E155DA78828BA74CAF1527614E1BB9B5EB12C573D4295555AE71B5AA0 shows no skill tool and exact HISTOS_NATIVE_SKILL_NONTRIGGER_OK, exit=0",
+      "Codex 0.147.0 process-local native probe PASS with existing LM Studio model qwen/qwen3.8-27b: --disable plugins, --ignore-user-config, --ephemeral, read-only sandbox; trigger receipt=codex-trigger-27b-readallowed.jsonl sha256=905577C45EEF47C0D215A8021ADC5DD96125A7287785A0179A8D2C38A72620BA shows one read-only command_execution reopening the project-local .agents/skills/histos-native-probe/SKILL.md and the exact body marker HISTOS_NATIVE_SKILL_ACTIVATED, exit=0; non-trigger receipt=codex-nontrigger-27b.jsonl sha256=6BE93D015C897C9708AC63532FC4C5490A4D71E3A11698C8F828B490FC494174 shows no skill/tool read and exact HISTOS_NATIVE_CODEX_NONTRIGGER_OK, exit=0; no pull, global Codex config/auth hashes unchanged, and LM Studio model/server restored to stopped/unloaded"
+    ]},
+    {"id":"R6","state":"DONE","depends_on":["R2","R3","R4"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=ca7e3ec; worker 051a45c and Coordinator aggregate integration ca7e3ec; fresh independent verifier exact candidate PASS",
+      "DistillationProvider descriptor model_assisted/egress=none/capabilities=capture_candidate,distill with process-local generate only; optional Kura read-only evaluateCandidate uses pinned R4 quote/echo floor and raw store remains unchanged",
+      "H03 acceptance strips provider confidence/status, requires explicit host decision and verifyProvenance for verified records; positive Kura-grounded candidate accepted with 2 independent supports; authority=none,current_truth=false",
+      "bounded refusals and tests: store echo, unsupported quote/numeric, duplicate lineage, stale/scope, provider failure, rate/cost/time, secret/transcript, nested/camelCase authority/currentTruth; H04 retry/coalesce/replay/restart preserved",
+      "fresh verifier: npm ci PASS; focused R6 7/7; repository aggregate 145/145; git diff --check clean; global fetch guard observed no network/model call; provider registry remember/write unsupported"
+    ]},
+    {"id":"R7","state":"DONE","depends_on":["R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=1d0a62b; worker 4d9d814 and Coordinator hardening integrated; package aggregate now includes friction replay",
+      "fresh verifier held-out fixture schema histos.friction-replay-report/v1: 8 records (dev4/held_out4), fixture_sha256=9a75e19e468d6854b567618e3f753586a3122d9666119b28716b0599a13b33e0",
+      "held-out distill_all selected4/useful3 P=.75 R=1; friction_only selected0 P/R=0 missed3 useful; friction_plus_verification selected1/useful1 P=1 R=1/3; utility_smooth_positive selected2/useful2 P=1 R=2/3, quality=1.9 cost=5",
+      "all policies authority=none,current_truth=false,utility_only=true; independent scope/stale/duplicate/order/budget/label-routing/authority probes pass; nested/camelCase label and gold leaks now reject fail-closed"
+    ]},
+    {"id":"R8","state":"DONE","depends_on":["R2","R7"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=ff4a0b1; worker 8e98fc6 and Coordinator package aggregate integration; exact R8 focused suite 5/5 pass",
+      "fresh independent verifier exact candidate PASS: npm ci exit0, npm test 150/150, git diff --check clean; Codex/OpenCode telemetry converges on histos.telemetry-gates/a00/v1 with exact caller signature/scope/snapshot/evidence binding",
+      "A00 duplicate/replay remains one occurrence; missing/stale/out-of-scope/authority/secret/forged signature/operation mismatch refuse; OBSERVED authority=none/current_truth=false/activation unauthorized",
+      "A01 telemetry is routing-only: stripped report deep-equals direct evaluate report, selection/rollback hashes unchanged, friction/smooth-positive routes bounded; no network/model/paid calls"
+    ]},
+    {"id":"R9","state":"DONE","depends_on":["R1","R2","R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=df8ffdf; worker a01c9eb and Coordinator aggregate integration; HISTOS R9 focused suite 11/11 pass",
+      "fresh independent verifier exact candidate PASS: npm ci exit0, full npm test 161/161, git diff --check clean; positive real H01 compileContextCapsule + faithful H03 recall contract",
+      "EPHEMERA canonical ref program/ephemera-full-20260908@cf26daf7b661147ce101f8bec331a5ebe8812dc8; isolated H05 adapter test 10/10 pass",
+      "H05 seam binds histos.context-capsule/v1 and histos.memory-recall/v0 scope/snapshot/current-truth/evidence; detached callbacks; Mission transition sentinel 0 calls; stale/out-of-scope/authority/current-truth/unknown/missing/secret/control/replay refusals PASS"
+    ]},
+    {"id":"R10","state":"DONE","depends_on":["R2","R3","R4","R5","R6","R7","R8","R9"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=c2088be; worker 4beff9d and Coordinator aggregate integration; focused R10 suite 1/1 pass",
+      "fresh independent verifier exact candidate PASS: npm ci exit0/0 vulnerabilities, full npm test 162/162, git diff --check/status clean",
+      "report schema histos.recovery-security-regression/v1 status PASS with seven probes: service drift/restart/refresh; event replay/scope/privacy/authority; provider/H04 recovery; Kura read/admin/raw immutability/stale refresh; Skill CAS/path/ownership/uninstall; R8 A00/A01; R9 H05",
+      "no network/model/paid calls; all recovery/security refusal codes and transition_calls=0 independently observed"
+    ]},
+    {"id":"R11","state":"DONE","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
+      "final exact candidate=daa65fe; Coordinator npm test 162/162 and H01 frozen benchmark all/held-out recall=1.0, no-answer=1/1, cold=3 parsed/warm=3 reused, rendered=6047 tokens/raw=15935 bytes",
+      "fresh independent final user-flow verifier PASS on exact candidate: receipt=.tmp/final-user-flow-verify-20260909/receipt.json; criteria 1-7 all PASS; profile=94e41e8a-afea-4559-b3ff-00f018f33b01; initial/restarted instances cee6cb4f-181a-4281-8763-08a3cb745c96/c6201afd-6394-489a-bb50-519104c59f6e",
+      "same-snapshot Codex/OpenCode stdio MCP search/compile/exact-read/explain and scope refusal PASS; H03 historical memory refs f58ff.../c23ba..., authority=none/current_truth=false, independent_support_count=2; stale source refused until refresh; Codex config unchanged",
+      "post-R5 Coordinator re-run on exact candidate daa65fe: npm test 162/162, bench:h01 aggregate all/held-out complete recall=1.0 and no-answer=1/1, cold=3 parsed/warm=3 reused, rendered=6047 tokens/raw=15935 bytes; fresh independent final acceptance by Harvey after R5: candidate/receipt/user-flow/R5/readback all PASS; no repository edits",
+      "live post-receipt host readback: Codex config currently sha256=DD1ED3E78D6F7D3E5C3281B8195E4DE778863FC8BBBE31A9327ED957FD1A56F9, mtime=2026-09-09T09:12:21.7836406Z, model=gpt-5.6-luna, reasoning=max; OpenCode auth sha256=729254F2665D310FADB208743A7CBF563A5CC6389037B483790FBEE696E36052 unchanged; this ambient host write occurred after the recorded R5 pre/post hash=12F2B485713F42F5A7B0B30050C2303DD02EE225EBCD99F3989192094EA67C and was not performed or repaired by the Coordinator"
+    ]}
+  ],
+  "evidence_refs": [
+    "R0/runtime-model-proof:gpt-5.6-luna/max",
+    "R0/pr3-host-tests:106/106",
+    "R0/pr3-aggregate-coverage:18/18",
+    "R0/pr4-research-classification:captured",
+    "R1/npm-test:106/106",
+    "R1/h01-benchmark:recall=1.0/no-answer=1/1",
+    "R1/focused-host-regression:29/29",
+    "R2/evidence-event-focused:8/8",
+    "R2/full-regression:114/114",
+    "R2/independent-verifier:replay-scope-privacy-telemetry-PASS",
+    "R3/provider-focused:5/5",
+    "R3/full-regression:119/119",
+    "R3/independent-verifier:16-rejection-probes-plus-native-pass-through-PASS",
+    "R4/kura-focused:6/6",
+    "R4/equal-scope-report:recall=1.0-descent=1.0-restart=PASS-stale=PASS-readonly=PASS",
+    "R4/independent-verifier:pinned-readonly-quote-echo-scope-PASS",
+    "R5/projection-focused:8/8",
+    "R5/independent-verifier:CAS-drift-managed-uninstall-path-guards-PASS",
+    "R5/opencode-native-activation:trigger-and-nontrigger-PASS-exit0-skill-tool-body-marker",
+    "R5/codex-native-activation:project-local-body-read-exact-marker-and-nontrigger-PASS",
+    "R7/replay-focused:5/5",
+    "R7/independent-verifier:heldout-routes-budgets-scope-utility-only-PASS",
+    "R6/distillation-focused:7/7",
+    "R6/full-regression:145/145",
+    "R6/independent-verifier:kura-h03-h04-network-guard-PASS"
+    ,"R8/telemetry-focused:5/5"
+    ,"R8/full-regression:150/150"
+    ,"R8/independent-verifier:a00-a01-scope-replay-authority-routing-PASS"
+    ,"FIRST_USABLE/fresh-verifier:receipt-run-1788939704248"
+    ,"R9/compatibility-focused:11/11"
+    ,"R9/full-regression:161/161"
+     ,"R9/independent-verifier:histos-ephemera-contracts-PASS"
+     ,"R10/recovery-security-focused:1/1"
+     ,"R10/full-regression:162/162"
+     ,"R10/independent-verifier:seven-probes-PASS"
+     ,"R11/npm-test-final:162/162"
+     ,"R11/h01-final:recall=1.0/no-answer=1/1"
+     ,"R11/final-user-flow-verifier:criteria-1-7-PASS"
+     ,"R11/fresh-independent-final-acceptance:Harvey-candidate-daa65fe-tests162-h01-userflow-r5-PASS"
+     ,"R11/live-host-readback:auth-unchanged-luna-max-current-config-ambient-drift-recorded"
+  ],
+  "blockers": [],
+  "unresolved_side_effects": [
+    "ambient Codex Desktop/host config write after R11 receipt: current config DD1ED3E7...; Coordinator did not edit, restore, or broaden this protected user setting; auth unchanged"
+  ],
+  "ready_next": "none",
+  "last_checkpoint": {
+    "at": "2026-09-09T18:20:11+09:00",
+    "kind": "PROGRAM_DONE",
+    "candidate_sha": "daa65fefa1e4b0222356e664556d87e3f8bf4d14"
+  }
+}

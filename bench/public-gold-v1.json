@@ -1,0 +1,212 @@
+{
+  "schema": "histos.benchmark-suite/v1",
+  "suite_id": "public-chatgpt-mcp-v1",
+  "gold_status": "FROZEN",
+  "manifest": "public-corpus-v1.json",
+  "profiles": [
+    {
+      "id": "2k",
+      "max_tokens": 2000
+    },
+    {
+      "id": "4k",
+      "max_tokens": 4000
+    },
+    {
+      "id": "8k",
+      "max_tokens": 8000
+    }
+  ],
+  "tokenizer": {
+    "implementation": "js-tiktoken",
+    "version": "1.0.21",
+    "encoding": "cl100k_base"
+  },
+  "annotation_method": "Source-only independent review of all seven cases against exact public Git blobs at d353159c6a9e7622603819b608422169c9a1f9d4 before any benchmark scoring or tuning. Evidence ranges and wording corrected only from source semantics; missing-source negative retained. Hash-bound independent freeze receipt is authoritative.",
+  "cases": [
+    {
+      "id": "heartbeat-pending-guard",
+      "split": "development",
+      "query": "classifyHeartbeatLeaf pending EXEC_IN_FLIGHT",
+      "required_evidence_groups": [
+        {
+          "id": "pending-execution-is-unsafe",
+          "rationale": "classifyHeartbeatLeaf immediately returns safe:false and EXEC_IN_FLIGHT when state.pending is truthy.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+              "start_line": 56,
+              "end_line": 57
+            }
+          ]
+        }
+      ],
+      "corpus": [
+        "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs"
+      ]
+    },
+    {
+      "id": "goal-dry-run",
+      "split": "development",
+      "query": "dry-run worker_started durable_state_written",
+      "required_evidence_groups": [
+        {
+          "id": "dry-run-exits-before-agent-start",
+          "rationale": "The dry branch reports worker_started:false and durable_state_written:false, exits with status 0, and precedes the agent spawn.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+              "start_line": 23,
+              "end_line": 29
+            }
+          ]
+        }
+      ],
+      "corpus": [
+        "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs"
+      ]
+    },
+    {
+      "id": "context-rotation",
+      "split": "development",
+      "query": "decideContextRotation constraintDrift hardRatio",
+      "required_evidence_groups": [
+        {
+          "id": "constraint-drift-and-hard-threshold-rotate",
+          "rationale": "After input validation, constraintDrift rotates first; otherwise utilization at or above hardRatio rotates with HARD_CONTEXT_THRESHOLD.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs",
+              "start_line": 2,
+              "end_line": 2
+            }
+          ]
+        }
+      ],
+      "corpus": [
+        "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs"
+      ]
+    },
+    {
+      "id": "latest-leaf-tiebreak",
+      "split": "held_out",
+      "query": "How does the scheduler select the latest leaf in a root run's descendant tree when creation times tie?",
+      "required_evidence_groups": [
+        {
+          "id": "only-descendant-leaves",
+          "rationale": "The root seeds the descendant set, parent links extend it transitively, and leaves exclude every descendant with a child. A root without descendants can itself be a leaf.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+              "start_line": 26,
+              "end_line": 46
+            }
+          ]
+        },
+        {
+          "id": "created-time-mtime-and-id-order",
+          "rationale": "Sort descending by created_at string, then file mtimeMs, then run_id string; return the first leaf, or throw when none exist.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+              "start_line": 47,
+              "end_line": 53
+            }
+          ]
+        }
+      ],
+      "corpus": [
+        "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs"
+      ]
+    },
+    {
+      "id": "local-supervisor-escalation",
+      "split": "held_out",
+      "query": "How does the goal entrypoint handle COMPLETE versus NEEDS_SUPERVISOR decisions, and how does it record local-agent ownership before supervising?",
+      "required_evidence_groups": [
+        {
+          "id": "complete-agent-exits",
+          "rationale": "COMPLETE prints the agent run ID and supervisor_used:false, then exits successfully before ownership-file creation or the supervisor loop.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+              "start_line": 33,
+              "end_line": 36
+            }
+          ]
+        },
+        {
+          "id": "supervisor-required-before-owner-write",
+          "rationale": "Only NEEDS_SUPERVISOR proceeds; other decisions throw. The owner JSON records protocol/schema and dev-exec, agent, worker, and goal identity before the supervisor loop.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+              "start_line": 37,
+              "end_line": 41
+            }
+          ]
+        },
+        {
+          "id": "supervisor-loop-and-exit-status",
+          "rationale": "After ownership is written, report-only and supervision intent are set, the loop is spawned, and its status is propagated with null mapped to 2.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+              "start_line": 42,
+              "end_line": 46
+            }
+          ]
+        }
+      ],
+      "corpus": [
+        "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs"
+      ]
+    },
+    {
+      "id": "checkpoint-bounds",
+      "split": "held_out",
+      "query": "What bounded history and file lists are kept in a fresh session checkpoint?",
+      "required_evidence_groups": [
+        {
+          "id": "checkpoint-list-caps",
+          "rationale": "Checkpoint lists retain the first 100 changed_files, the last 20 completed_actions, and the first 20 important_files; non-array values become empty arrays.",
+          "ranges": [
+            {
+              "path": "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs",
+              "start_line": 3,
+              "end_line": 3
+            }
+          ]
+        }
+      ],
+      "corpus": [
+        "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs"
+      ]
+    },
+    {
+      "id": "absent-feature",
+      "split": "held_out",
+      "query": "In local-agent-facade.mjs, which internal conditions make an agent report COMPLETE rather than NEEDS_SUPERVISOR?",
+      "required_evidence_groups": [],
+      "expect_no_answer": true,
+      "corpus": [
+        "fixtures/public-chatgpt-mcp-v1/devexec-heartbeat-scheduler.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-goal.mjs",
+        "fixtures/public-chatgpt-mcp-v1/devexec-context-governor.mjs"
+      ],
+      "annotation_note": "Missing-source negative: the corpus contains a caller that branches on these decisions, but not local-agent-facade.mjs or its internal decision implementation. Caller branches cannot establish the missing implementation conditions."
+    }
+  ]
+}
