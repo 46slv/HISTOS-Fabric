@@ -2,7 +2,7 @@
   "schema": "histos.autonomous-continuation-state/v1",
   "plan_id": "HISTOS_LUNAMAX_CONTINUATION_20260909",
   "goal_id": "HISTOS-V1-OPERATIONAL-LOOP",
-  "program_status": "RUNNING",
+  "program_status": "CHECKPOINTED",
   "first_usable": "PASS",
   "coordinator": {
     "required_model": "Luna Max",
@@ -26,7 +26,7 @@
     "research_synthesis_pr": 4,
     "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
   },
-  "active_task": "R11",
+  "active_task": "R5",
   "tasks": [
     {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
@@ -101,7 +101,12 @@
       "report schema histos.recovery-security-regression/v1 status PASS with seven probes: service drift/restart/refresh; event replay/scope/privacy/authority; provider/H04 recovery; Kura read/admin/raw immutability/stale refresh; Skill CAS/path/ownership/uninstall; R8 A00/A01; R9 H05",
       "no network/model/paid calls; all recovery/security refusal codes and transition_calls=0 independently observed"
     ]},
-    {"id":"R11","state":"RUNNING","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]}
+    {"id":"R11","state":"WAITING","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
+      "final exact candidate=daa65fe; Coordinator npm test 162/162 and H01 frozen benchmark all/held-out recall=1.0, no-answer=1/1, cold=3 parsed/warm=3 reused, rendered=6047 tokens/raw=15935 bytes",
+      "fresh independent final user-flow verifier PASS on exact candidate: receipt=.tmp/final-user-flow-verify-20260909/receipt.json; criteria 1-7 all PASS; profile=94e41e8a-afea-4559-b3ff-00f018f33b01; initial/restarted instances cee6cb4f-181a-4281-8763-08a3cb745c96/c6201afd-6394-489a-bb50-519104c59f6e",
+      "same-snapshot Codex/OpenCode stdio MCP search/compile/exact-read/explain and scope refusal PASS; H03 historical memory refs f58ff.../c23ba..., authority=none/current_truth=false, independent_support_count=2; stale source refused until refresh; Codex config unchanged",
+      "R11 cannot close PROGRAM_DONE while R5 native Codex/OpenCode activation remains NOT_RUN; no local model pull or provider/config change authorized"
+    ]}
   ],
   "evidence_refs": [
     "R0/runtime-model-proof:gpt-5.6-luna/max",
@@ -137,15 +142,18 @@
      ,"R10/recovery-security-focused:1/1"
      ,"R10/full-regression:162/162"
      ,"R10/independent-verifier:seven-probes-PASS"
+     ,"R11/npm-test-final:162/162"
+     ,"R11/h01-final:recall=1.0/no-answer=1/1"
+     ,"R11/final-user-flow-verifier:criteria-1-7-PASS"
   ],
   "blockers": [
     "R5 activation proof NOT_RUN: no local LM Studio/Ollama model is available on this host; do not claim Codex/OpenCode trigger PASS until a process-local native client probe succeeds"
   ],
   "unresolved_side_effects": [],
-  "ready_next": "R11: final exact-candidate regression, H01 benchmark, FIRST_USABLE user-flow rerun, final independent verification and bounded delivery checkpoint; R5 activation remains WAITING on native local model/client proof.",
+  "ready_next": "R5: obtain an authorized process-local native Codex/OpenCode skill activation proof with an available local model (no auto-pull); then rerun R11 on the resulting candidate.",
   "last_checkpoint": {
-    "at": "2026-09-09T17:22:00+09:00",
-    "kind": "R10_ACCEPTED_R11_RUNNING",
-    "candidate_sha": "c2088be60a7359d14a42f69acb08495133d9969f"
+    "at": "2026-09-09T17:27:00+09:00",
+    "kind": "R11_CHECKPOINT_R5_ACTIVATION_NOT_RUN",
+    "candidate_sha": "daa65fefa1e4b0222356e664556d87e3f8bf4d14"
   }
 }
