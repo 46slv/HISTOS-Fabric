@@ -41,15 +41,16 @@ const MAX_ARTIFACT_BYTES = 16 * 1024 * 1024;
 const MAX_REFS = 128;
 const MAX_LINEAGE = 16;
 const MAX_EVENTS = 10_000;
-const CONTROL_KEYS = new Set([
+const expandSafetyKeys = keys => new Set([...keys, ...keys.map(key => key.replaceAll('_', ''))]);
+const CONTROL_KEYS = expandSafetyKeys([
   'authority', 'current_truth', 'verified', 'active', 'activation', 'permission',
   'retention', 'mission_state', 'completion', 'safety', 'budget', 'proof', 'support',
 ]);
-const SECRET_KEYS = new Set([
+const SECRET_KEYS = expandSafetyKeys([
   'secret', 'secrets', 'password', 'passwd', 'token', 'access_token', 'refresh_token',
   'api_key', 'apikey', 'credential', 'credentials', 'authorization', 'cookie', 'private_key',
 ]);
-const TRANSCRIPT_KEYS = new Set([
+const TRANSCRIPT_KEYS = expandSafetyKeys([
   'transcript', 'raw_transcript', 'messages', 'conversation', 'chat_history', 'session_text',
   'raw_session', 'prompt', 'completion', 'assistant_message', 'user_message', 'chat_log',
   'payload', 'raw_input', 'raw_output', 'raw_text',
@@ -112,10 +113,19 @@ function checkSafeObject(value, depth = 0) {
   }
   if (!value || typeof value !== 'object') return;
   for (const [key, item] of Object.entries(value)) {
-    const normalizedKey = key.toLowerCase().replaceAll('-', '_');
-    if (CONTROL_KEYS.has(normalizedKey)) fail('EVENT_AUTHORITY_MUTATION');
-    if (SECRET_KEYS.has(normalizedKey)) fail('EVENT_SECRET_PAYLOAD');
-    if (TRANSCRIPT_KEYS.has(normalizedKey)) fail('EVENT_TRANSCRIPT_PAYLOAD');
+    // Normalize separators and camelCase before checking.  Qualification
+    // adapters used both snake_case and JavaScript-style metadata names; a
+    // spelling variant must not bypass the same fail-closed boundary.
+    const normalizedKey = key
+      .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+      .replace(/[\s-]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .toLowerCase();
+    const safetyKeys = new Set([normalizedKey, normalizedKey.replaceAll('_', ''), key.toLowerCase().replace(/[\s_-]+/g, '')]);
+    if ([...safetyKeys].some(candidate => CONTROL_KEYS.has(candidate))) fail('EVENT_AUTHORITY_MUTATION');
+    if ([...safetyKeys].some(candidate => SECRET_KEYS.has(candidate))) fail('EVENT_SECRET_PAYLOAD');
+    if ([...safetyKeys].some(candidate => TRANSCRIPT_KEYS.has(candidate))) fail('EVENT_TRANSCRIPT_PAYLOAD');
     if (typeof item === 'string' && item.length > 16 * 1024) fail('EVENT_FIELD_OVERSIZED');
     checkSafeObject(item, depth + 1);
   }

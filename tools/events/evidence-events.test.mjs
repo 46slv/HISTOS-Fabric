@@ -98,6 +98,14 @@ test('scope, secret, transcript, malformed and stale references fail closed', ()
   assert.throws(() => normalizeEvidenceEvent(base({ occurred_at: 'yesterday' })), /EVENT_OCCURRED_AT_INVALID/);
 });
 
+test('camelCase and compact safety-key aliases fail closed inside operation contracts', () => {
+  const operation = { operation_id: 'safe-contract', name: 'safe-contract', version: '1', semantic_steps: ['inspect'] };
+  assert.throws(() => normalizeEvidenceEvent(base({ operation_signature: { ...operation, input_contract: { accessToken: 'blocked' } } })), /EVENT_SECRET_PAYLOAD/);
+  assert.throws(() => normalizeEvidenceEvent(base({ operation_signature: { ...operation, output_contract: { rawTranscript: 'blocked' } } })), /EVENT_TRANSCRIPT_PAYLOAD/);
+  assert.throws(() => normalizeEvidenceEvent(base({ operation_signature: { ...operation, input_contract: { currentTruth: true } } })), /EVENT_AUTHORITY_MUTATION/);
+  assert.throws(() => normalizeEvidenceEvent(base({ operation_signature: { ...operation, input_contract: { accesstoken: 'blocked' } } })), /EVENT_SECRET_PAYLOAD/);
+});
+
 test('friction and smooth-positive routes coexist without evidence promotion', () => {
   const friction = normalizeEvidenceEvent(base({ event_id: 'friction-event', event_kind: 'retry_or_repair', outcome: 'failure', friction: { tool_error_retry_count: 1 } }));
   const smooth = normalizeEvidenceEvent(base({ event_id: 'smooth-event', event_kind: 'successful_procedure', smooth_positive: true }));
