@@ -11,9 +11,11 @@ export const DOCTOR_STAGES = Object.freeze([
 ]);
 
 const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
-const FORBIDDEN_KEYS = new Set([
+const expandForbiddenKeys = keys => new Set([...keys, ...keys.map(key => key.replaceAll('_', ''))]);
+const FORBIDDEN_KEYS = expandForbiddenKeys([
   'authority',
   'current_truth',
+  'mission_state',
   'verified',
   'active',
   'activation',
@@ -21,10 +23,17 @@ const FORBIDDEN_KEYS = new Set([
   'prompt',
   'completion',
   'transcript',
+  'raw_transcript',
   'messages',
   'conversation',
+  'chat_history',
+  'raw_input',
+  'raw_output',
+  'raw_text',
   'secret',
   'token',
+  'access_token',
+  'api_key',
   'credential',
   'cookie',
 ]);
@@ -52,7 +61,14 @@ function safeObservation(value, code) {
   if (typeof value === 'boolean') return value;
   if (!object(value)) fail(code);
   for (const key of Object.keys(value)) {
-    if (FORBIDDEN_KEYS.has(key.toLowerCase().replaceAll('-', '_'))) fail('EVIDENCE_DOCTOR_UNSAFE_OBSERVATION');
+    const normalizedKey = key
+      .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+      .replace(/[\s-]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .toLowerCase();
+    const safetyKeys = new Set([normalizedKey, normalizedKey.replaceAll('_', ''), key.toLowerCase().replace(/[\s_-]+/g, '')]);
+    if ([...safetyKeys].some(candidate => FORBIDDEN_KEYS.has(candidate))) fail('EVIDENCE_DOCTOR_UNSAFE_OBSERVATION');
   }
   return value.status === 'PASS' || value.status === 'OK' || value.available === true || value.present === true;
 }

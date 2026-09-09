@@ -75,6 +75,9 @@ test('doctor does not accept authority or transcript-shaped observations', () =>
   const journal = createEvidenceEventJournal({ scope });
   assert.throws(() => doctorEvidenceJournal({ journal, observation: { authority: 'system' } }), /EVIDENCE_DOCTOR_UNSAFE_OBSERVATION/);
   assert.throws(() => doctorEvidenceJournal({ journal, remembered: { transcript: 'raw' } }), /EVIDENCE_DOCTOR_UNSAFE_OBSERVATION/);
+  assert.throws(() => doctorEvidenceJournal({ journal, observation: { currentTruth: true } }), /EVIDENCE_DOCTOR_UNSAFE_OBSERVATION/);
+  assert.throws(() => doctorEvidenceJournal({ journal, remembered: { rawTranscript: 'blocked' } }), /EVIDENCE_DOCTOR_UNSAFE_OBSERVATION/);
+  assert.throws(() => doctorEvidenceJournal({ journal, grounded: { accessToken: 'blocked' } }), /EVIDENCE_DOCTOR_UNSAFE_OBSERVATION/);
 });
 
 test('persistent root and logical references fail closed at the physical boundary', () => {
