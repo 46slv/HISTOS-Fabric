@@ -160,6 +160,6 @@
   "last_checkpoint": {
     "at": "2026-09-09T18:20:11+09:00",
     "kind": "PROGRAM_DONE",
-    "candidate_sha": "daa65fefa1e4b0222356e664556d87e3f8bf4d14"
+    "candidate_sha": "daa65fefa1e4b0222356e664556d87f3e8bf4d14"
   }
 }

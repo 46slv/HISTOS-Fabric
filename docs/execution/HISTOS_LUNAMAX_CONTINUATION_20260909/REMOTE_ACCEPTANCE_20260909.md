@@ -10,6 +10,7 @@ This file is the non-secret acceptance surface for the completed HISTOS candidat
 - The exact state checkpoint is `639fc5769abeb2db5f7193615bab1f54a2004f55` (`commit`, parent `b1e8202cc66cb80246e004a1f736b185fc16f0c2`, tree `a76f3117eb38b0a58627cb43a7b5ab995cfcbf0f`).
 - `daa65fe...` is an ancestor of `639fc57...`; the only changed path between them is `docs/execution/HISTOS_LUNAMAX_CONTINUATION_20260909/STATE.json`. No implementation or test path changed in that checkpoint.
 - The candidate descends from `program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30`. The checkpoint's `STATE.json` is the source of the `PROGRAM_DONE` and `FIRST_USABLE` status; the earlier implementation candidate's state still correctly showed R11 in progress.
+- The original checkpoint remains immutable. The landing copy corrects only its historical `last_checkpoint.candidate_sha` spelling to the exact Git object above; this correction is requalified below and does not reuse the malformed report as evidence.
 - The fetched remote `execution/histos-lunamax-continuation-20260909` is `d09385d778303d1a46759c6e8cc2e68067bbff0b` (tree `132083d8fe50e068cae37b399c045782555cd141`), based on `fe51dd378101c3f52ff7e7bae3010bfb98332e81`, and is not an ancestor of the verified checkpoint. Its plan-only `PREFLIGHT` state and deletion-heavy post-program commit are retained as a separate historical line. No force-push is used.
 
 The landing branch is based on the verified state checkpoint `639fc5769abeb2db5f7193615bab1f54a2004f55` and is intentionally non-protected.
@@ -90,6 +91,8 @@ The landing Coordinator's fresh Codex session metadata, not prompt text, records
 ## Landing gate
 
 The first post-push remote readback verified head `a03fd8b330c7d0d53a3469e5b0c168e73ef665b7`, tree `e0952e28352df24364724a4255ce58328839708d`, parent `639fc5769abeb2db5f7193615bab1f54a2004f55`, a clean worktree, `PROGRAM_DONE`/`FIRST_USABLE=PASS`/R11 `DONE`, exact aggregate coverage `27/27`, and `git diff --check=PASS`. The final fast-forward commit carrying this status is independently re-run after push; `REMOTE_CANDIDATE_ACCEPTED` means the non-protected remote candidate passed that exact-SHA gate, not that a protected merge or release occurred.
+
+After the identity correction, the final landing ref was re-read as `REMOTE_CANDIDATE_ACCEPTED` at its new exact SHA and independently rerun with the same gates; the original `639fc...` checkpoint and the pre-correction `985ae...` landing commit remain available as historical evidence.
 
 Protected merge remains outside this run.
 
