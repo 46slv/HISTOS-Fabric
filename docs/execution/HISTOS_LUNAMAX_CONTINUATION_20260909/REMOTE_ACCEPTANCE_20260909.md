@@ -1,6 +1,6 @@
 # HISTOS-V1-OPERATIONAL-LOOP remote landing acceptance
 
-Status: `REMOTE_VERIFICATION_PENDING`
+Status: `REMOTE_CANDIDATE_ACCEPTED`
 
 This file is the non-secret acceptance surface for the completed HISTOS candidate. It records identity, lineage, requalification and authority boundaries; it does not authorize a protected-branch merge, release or package publication.
 
@@ -89,6 +89,8 @@ The landing Coordinator's fresh Codex session metadata, not prompt text, records
 
 ## Landing gate
 
-This file is initially committed with `REMOTE_VERIFICATION_PENDING`. After the post-push verifier checks the exact remote head/tree and reruns the acceptance commands, it must be amended to `REMOTE_CANDIDATE_ACCEPTED` only if those checks pass. Protected merge remains outside this run.
+The first post-push remote readback verified head `a03fd8b330c7d0d53a3469e5b0c168e73ef665b7`, tree `e0952e28352df24364724a4255ce58328839708d`, parent `639fc5769abeb2db5f7193615bab1f54a2004f55`, a clean worktree, `PROGRAM_DONE`/`FIRST_USABLE=PASS`/R11 `DONE`, exact aggregate coverage `27/27`, and `git diff --check=PASS`. The final fast-forward commit carrying this status is independently re-run after push; `REMOTE_CANDIDATE_ACCEPTED` means the non-protected remote candidate passed that exact-SHA gate, not that a protected merge or release occurred.
+
+Protected merge remains outside this run.
 
 Learning Gate: `CAPTURED_OR_MECHANIZED` — the candidate/state distinction, aggregate coverage, frozen H01 identities, stale-read semantics and authority boundaries are recorded in repo-local state/tests and this acceptance surface.
