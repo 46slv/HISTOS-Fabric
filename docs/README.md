@@ -1,80 +1,76 @@
 # HISTOS-Fabric Documentation
 
-Status: **BOOTSTRAP / RESEARCH ROUTER**
+Status: **BOOTSTRAP / RESEARCH + IMPLEMENTATION-CANDIDATE ROUTER**
 
-This directory records the current target boundary, ecosystem relationships, research basis and development goals for HISTOS-Fabric. Documentation must distinguish future intent from implemented/runtime-proven behavior.
+HISTOS documentation is split by authority. `main` is currently the research/docs landing line, while separate branches contain experimental implementation candidates. Do not infer canonical adoption from branch presence.
 
-## Read first
+## Start here
 
-1. [`ARCHITECTURE.md`](ARCHITECTURE.md)
-   - target Context Substrate architecture;
-   - Context Capsule and progressive-disclosure model;
-   - provenance, freshness, externalization, indexing and consolidation invariants;
-   - agent-facing versus privileged interfaces.
+1. [`CURRENT_SYNTHESIS_2026-09-09.md`](CURRENT_SYNTHESIS_2026-09-09.md)
+   - current interpretation after Kura, TeamAI and Agent Skills source inspection;
+   - stable invariants and proposed design deltas;
+   - revised experiment priorities.
 
-2. [`ECOSYSTEM_RELATIONSHIPS.md`](ECOSYSTEM_RELATIONSHIPS.md)
-   - HISTOS-Fabric versus EPHEMERA-System;
-   - HISTOS-Fabric versus EPHEMERA Harness;
-   - direct Codex/OpenCode use;
-   - project repositories, Dev Exec, Git/Obsidian and other adapters.
+2. [`IMPLEMENTATION_CANDIDATE_MAP_2026-09-09.md`](IMPLEMENTATION_CANDIDATE_MAP_2026-09-09.md)
+   - exact `main`, PR and program-branch refs;
+   - H01/H02/H03/H04/H06/A00/A01 capability/status map;
+   - what is already implemented as a candidate versus genuinely new research.
 
-3. [`ROADMAP.md`](ROADMAP.md)
-   - bounded implementation sequence;
-   - milestone acceptance criteria;
-   - what not to build too early;
-   - long-term development goals.
+3. [`PROVIDER_PROJECTION_ARCHITECTURE.md`](PROVIDER_PROJECTION_ARCHITECTURE.md)
+   - Kernel/native candidate versus Source/Memory/Distillation/Projection providers;
+   - capability and authority boundaries;
+   - Kura and Agent Skills integration shape.
 
-4. [`RESEARCH.md`](RESEARCH.md)
-   - existing systems and mechanisms to investigate;
-   - extracted design lessons;
-   - benchmark/evaluation direction;
-   - adoption rules.
+4. [`EVIDENCE_EVENT_CONTRACT.md`](EVIDENCE_EVENT_CONTRACT.md)
+   - provider-neutral event/evidence envelope;
+   - friction as a routing signal, not evidence;
+   - anti-self-corroboration and replay/dedup boundaries.
 
-5. [`KURA_RESEARCH_TARGET.md`](KURA_RESEARCH_TARGET.md)
-   - `lna-lab/distill-kura` as a HISTOS memory-plane benchmark target;
-   - locally observed Codex/OpenCode shared-memory evidence and remaining gaps;
-   - candidate reuse boundaries, research questions and adoption gates.
+## Core architecture and relationships
 
-6. [`TEAMAI_CLI_RESEARCH_TARGET.md`](TEAMAI_CLI_RESEARCH_TARGET.md)
-   - Tencent `teamai-cli` as cross-harness shared-context / learning prior art;
-   - friction-triggered learning, recall, promotion, code-graph and telemetry mechanisms;
-   - explicit comparison against HISTOS provenance, freshness and authority requirements;
-   - benchmark and adapter experiments before any adoption.
+- [`ARCHITECTURE.md`](ARCHITECTURE.md) — target Context Substrate, Context Capsule, progressive disclosure, provenance, indexing and bounded consolidation.
+- [`ECOSYSTEM_RELATIONSHIPS.md`](ECOSYSTEM_RELATIONSHIPS.md) — HISTOS versus EPHEMERA-System/Harness, Codex/OpenCode, projects, Dev Exec, Git/Obsidian and Console.
+- [`ROADMAP.md`](ROADMAP.md) — long-term capability map. Read the implementation-candidate map before treating a roadmap phase as unstarted.
+
+## Detailed design
+
+Start with [`design/v0/README.md`](design/v0/README.md), then [`design/v0/UPDATE_2026-09-09.md`](design/v0/UPDATE_2026-09-09.md). The older v0 recovery/security/context material remains useful, but the update and implementation map take precedence for component strategy and current candidate status.
+
+## Research foundation and targets
+
+- [`RESEARCH.md`](RESEARCH.md) — foundational prior art: ReMe, Hindsight, Letta, Aider, Serena, Continue, Graphiti/Zep, Mem0, MemOS/A-MEM, SkillsVote/SkillRL/EvolveMem, long-document retrieval and benchmarks.
+- [`KURA_RESEARCH_TARGET.md`](KURA_RESEARCH_TARGET.md) — `lna-lab/distill-kura` as memory/distillation provider and benchmark target.
+- [`TEAMAI_CLI_RESEARCH_TARGET.md`](TEAMAI_CLI_RESEARCH_TARGET.md) — Tencent TeamAI CLI as cross-harness distribution, retrieval, friction-trigger and promotion prior art.
+- [`AGENT_SKILLS_RESEARCH_TARGET.md`](AGENT_SKILLS_RESEARCH_TARGET.md) — open Agent Skills format/current Codex/OpenCode support as a portable procedural projection target.
+
+Research targets are not adopted dependencies. Current source inspection and experiments must precede qualification.
 
 ## Status vocabulary
 
 | Status | Meaning |
 | --- | --- |
-| `IMPLEMENTED` | Exists in HISTOS code and has named tests/runtime evidence. |
-| `ACCEPTED DESIGN` | Design/contract is approved but may not yet be fully implemented. |
+| `IMPLEMENTED` | Exists in the named exact code line and has named tests/runtime evidence. Does not imply main/production adoption. |
+| `IMPLEMENTED CANDIDATE` | Runnable component candidate with bounded evidence; independent/host/System gates may remain. |
+| `DRAFT DESIGN` | Concrete proposal/contract fixture; not accepted or implemented merely by documentation. |
+| `ACCEPTED DESIGN` | Approved design/contract; implementation may be incomplete. |
 | `TARGET ARCHITECTURE` | Intended direction; implementation may be partial or absent. |
-| `BOOTSTRAP` | Repository/contract setup before a stable runtime exists. |
-| `RESEARCH` | Investigation or evaluation only; not runtime authority. |
+| `BOOTSTRAP` | Repository/contract setup before a stable canonical runtime exists. |
+| `RESEARCH` | Investigation/evaluation only; not runtime authority. |
 | `EXPERIMENTAL` | Runnable candidate without stable/production authority. |
 | `DEPRECATED` | Present but should not be selected for new work. |
 | `SUPERSEDED` | Replaced by a named newer authority/source. |
 
 ## Source precedence
 
-For current facts, prefer:
+For current facts:
 
 ```text
 fresh source repository/runtime/System state
+  > exact implementation candidate + named tests/evidence for that candidate
   > immutable evidence / receipts
-  > implemented HISTOS contracts/tests
-  > accepted architecture
-  > target architecture
+  > accepted architecture/contracts
+  > target architecture / draft design
   > research notes
 ```
 
-A remembered or compiled representation must not override fresh live state when freshness matters.
-
-## Writing rule
-
-Substantial documents should state:
-
-- what responsibility they own;
-- whether they describe implementation or intent;
-- what evidence supports current implementation claims;
-- what they explicitly do not own;
-- what external source remains authoritative where relevant.
+Candidate implementation does not outrank a newer canonical source for a different responsibility. Remembered, projected or compiled representations never override a required fresh read.
