@@ -216,6 +216,15 @@ See [`docs/RESEARCH.md`](docs/RESEARCH.md).
 
 ## Current status
 
-This repository currently defines a direction and research boundary. It does **not** yet claim a stable daemon, MCP server, memory backend, Context Compiler, benchmark result, or production integration.
+This repository currently defines a direction and research boundary. It does **not** yet claim a stable daemon, MCP server, memory backend, or production integration.
+
+Experimental local candidates now exist for source/provenance and rendered
+capsule contracts, an independently frozen public-corpus retrieval benchmark,
+oversized-result externalization, incremental lexical/structural source indexing,
+and a provider-neutral budgeted Context Compiler. See [`bench/README.md`](bench/README.md),
+[`docs/CONTEXT_CONTRACT_V1.md`](docs/CONTEXT_CONTRACT_V1.md), and
+[`docs/H01_COMPONENT_CONTRACT.md`](docs/H01_COMPONENT_CONTRACT.md). These are bounded
+retrieval mechanisms; they do not establish end-to-end model gains or a stable
+service. The architecture and roadmap remain target documents.
 
 Implementation claims should be added only with exact code/tests/runtime evidence.
