@@ -26,7 +26,7 @@
     "research_synthesis_pr": 4,
     "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
   },
-  "active_task": "R2",
+  "active_task": "R3",
   "tasks": [
     {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
@@ -42,7 +42,14 @@
       "H03/H04 focused regression: evidence-memory, compiled-understanding and bounded Sleep recovery/idempotency/suppression tests included in 29/29 focused pass",
       "host identities: Node v24.14.1; Codex CLI 0.147.0; OpenCode 1.18.29; no global/user client configuration changed"
     ]},
-    {"id":"R2","state":"PENDING","depends_on":["R1"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R2","state":"DONE","depends_on":["R1"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=89b8648 cherry-picked from worker d5cf333b9cc91ad234ecfd4918baad5522fdac5b; Coordinator integration branch clean after full regression",
+      "provider-neutral histos.evidence-event/v1 normalizer with stable event/replay identity, bounded scope/snapshot/artifact lineage, privacy and non-authority controls",
+      "Codex/OpenCode/EPHEMERA/verifier adapters converge on the same normalized event shape; duplicate replay is idempotent and conflicting event IDs are refused",
+      "focused event suite: 8/8 pass; independent fresh verifier confirms replay, scope/stale, secret/transcript/control rejection, friction + smooth-positive routing, H03/H04/A00 projections",
+      "full repository regression on accepted candidate: npm test 114/114 pass, 0 fail, 0 skipped; git diff --check PASS",
+      "journal remains bounded in-memory ingest/read model; H03/H04/A00 projections explicitly authority=none/current_truth=false and A00 activation unauthorized"
+    ]},
     {"id":"R3","state":"PENDING","depends_on":["R1","R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
     {"id":"R4","state":"PENDING","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
     {"id":"R5","state":"PENDING","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
@@ -60,14 +67,17 @@
     "R0/pr4-research-classification:captured",
     "R1/npm-test:106/106",
     "R1/h01-benchmark:recall=1.0/no-answer=1/1",
-    "R1/focused-host-regression:29/29"
+    "R1/focused-host-regression:29/29",
+    "R2/evidence-event-focused:8/8",
+    "R2/full-regression:114/114",
+    "R2/independent-verifier:replay-scope-privacy-telemetry-PASS"
   ],
   "blockers": [],
   "unresolved_side_effects": [],
-  "ready_next": "R2: implement and verify provider-neutral Evidence Event envelope with replay identity, scope/artifact lineage, friction routing only, smooth-positive selection, and H03/H04/A00 telemetry adapters.",
+  "ready_next": "R3: define provider interfaces and native candidate-zero adapters over existing H01/H03 behavior; fail closed on unsupported operations.",
   "last_checkpoint": {
-    "at": "2026-09-09T13:55:00+09:00",
-    "kind": "PLAN_CREATED",
-    "candidate_sha": "66236395bcdae4355c94ec497aa51423ef1841ec"
+    "at": "2026-09-09T15:42:00+09:00",
+    "kind": "R2_ACCEPTED",
+    "candidate_sha": "89b86489fa174b65ab007a6dc3d2e7071a244324"
   }
 }
