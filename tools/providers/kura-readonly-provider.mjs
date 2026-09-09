@@ -72,6 +72,7 @@ function normalizeEvidence(ref, scope) {
   const quote = ref.quote === undefined ? undefined : boundedString(ref.quote, 'KURA_EVIDENCE_QUOTE_INVALID', 1000);
   const line = ref.line === undefined ? undefined : Number(ref.line);
   if (line !== undefined && (!Number.isInteger(line) || line < 1)) fail('KURA_EVIDENCE_LINE_INVALID');
+  if (ref.sha256 !== undefined && !SHA256.test(ref.sha256)) fail('KURA_EVIDENCE_DIGEST_INVALID');
   return {
     kind,
     path,
@@ -115,6 +116,7 @@ function normalizeStore(raw, { storeId, scope }) {
   if (actualStore !== storeId) fail('KURA_STORE_MISMATCH');
   const actualScope = normalizeScope(raw.scope ?? { scope_id: raw.scope_id, snapshot_digest: raw.snapshot_digest }, 'KURA_STORE_SCOPE_INVALID');
   if (actualScope.scope_id !== scope.scope_id) fail('KURA_SCOPE_MISMATCH');
+  if (scope.paths && JSON.stringify(actualScope.paths ?? []) !== JSON.stringify(scope.paths)) fail('KURA_SCOPE_PATHS_MISMATCH');
   const snapshot_digest = raw.snapshot_digest ?? actualScope.snapshot_digest;
   if (!snapshot_digest || !SHA256.test(snapshot_digest)) fail('KURA_STORE_SNAPSHOT_INVALID');
   if (scope.snapshot_digest && scope.snapshot_digest !== snapshot_digest) fail('KURA_SCOPE_SNAPSHOT_MISMATCH');
@@ -209,7 +211,7 @@ function summarizeContext(records) {
 export function createKuraReadOnlyProvider({ storePath, storeId, scope, upstream = KURA_UPSTREAM, expectedSnapshotDigest = null } = {}) {
   const boundScope = normalizeScope(scope);
   const boundStore = normalizeId(storeId, 'KURA_STORE_ID_REQUIRED');
-  if (!upstream || upstream.commit !== KURA_UPSTREAM.commit) fail('KURA_UPSTREAM_COMMIT_REQUIRED');
+  if (!upstream || upstream.repository !== KURA_UPSTREAM.repository || upstream.commit !== KURA_UPSTREAM.commit || upstream.version !== KURA_UPSTREAM.version) fail('KURA_UPSTREAM_PIN_REQUIRED');
   const descriptor = createProviderDescriptor({
     provider_id: `kura-readonly-${boundStore}`,
     provider_kind: 'MemoryProvider',
@@ -577,4 +579,3 @@ export async function runKuraReadOnlyComparison({ scope, cases, kuraProvider, ba
     authority_boundary: 'authority=none,current_truth=false; recalled memory is not current truth or Mission authority',
   };
 }
-

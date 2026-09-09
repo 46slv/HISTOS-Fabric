@@ -142,6 +142,26 @@ test('snapshot changes are refused until an explicit fresh provider is construct
   assert.equal(recalled.snapshot_digest, DIGEST_B);
 });
 
+test('upstream pin, store paths and evidence digests are bound fail-closed', async t => {
+  const f = await fixture(t);
+  assert.throws(() => createKuraReadOnlyProvider({
+    storePath: f.storePath, storeId: 'alpha', scope: scope(),
+    upstream: { ...KURA_UPSTREAM, repository: 'https://example.invalid/forged' },
+  }), /KURA_UPSTREAM_PIN_REQUIRED/u);
+
+  const forgedPaths = store();
+  forgedPaths.scope = { ...forgedPaths.scope, paths: ['evil.md'] };
+  await writeFile(f.storePath, JSON.stringify(forgedPaths, null, 2));
+  const pathBound = createKuraReadOnlyProvider({ storePath: f.storePath, storeId: 'alpha', scope: scope() });
+  await assert.rejects(pathBound.snapshot({ scope: scope() }), /KURA_SCOPE_PATHS_MISMATCH/u);
+
+  const forgedEvidence = store();
+  forgedEvidence.memories[0].evidence[0].sha256 = 'forged';
+  await writeFile(f.storePath, JSON.stringify(forgedEvidence, null, 2));
+  const digestBound = createKuraReadOnlyProvider({ storePath: f.storePath, storeId: 'alpha', scope: scope() });
+  await assert.rejects(digestBound.read({ id: 'restart-proof', scope: scope() }), /KURA_EVIDENCE_DIGEST_INVALID/u);
+});
+
 test('comparison report uses equal scopes/budgets and records recall, abstention, descent, bytes, latency, restart, stale and read-only gates', async t => {
   const f = await fixture(t);
   const bound = scope();
