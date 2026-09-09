@@ -26,7 +26,7 @@
     "research_synthesis_pr": 4,
     "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
   },
-  "active_task": "R10",
+  "active_task": "R11",
   "tasks": [
     {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
@@ -95,8 +95,13 @@
       "EPHEMERA canonical ref program/ephemera-full-20260908@cf26daf7b661147ce101f8bec331a5ebe8812dc8; isolated H05 adapter test 10/10 pass",
       "H05 seam binds histos.context-capsule/v1 and histos.memory-recall/v0 scope/snapshot/current-truth/evidence; detached callbacks; Mission transition sentinel 0 calls; stale/out-of-scope/authority/current-truth/unknown/missing/secret/control/replay refusals PASS"
     ]},
-    {"id":"R10","state":"RUNNING","depends_on":["R2","R3","R4","R5","R6","R7","R8","R9"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
-    {"id":"R11","state":"PENDING","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]}
+    {"id":"R10","state":"DONE","depends_on":["R2","R3","R4","R5","R6","R7","R8","R9"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=c2088be; worker 4beff9d and Coordinator aggregate integration; focused R10 suite 1/1 pass",
+      "fresh independent verifier exact candidate PASS: npm ci exit0/0 vulnerabilities, full npm test 162/162, git diff --check/status clean",
+      "report schema histos.recovery-security-regression/v1 status PASS with seven probes: service drift/restart/refresh; event replay/scope/privacy/authority; provider/H04 recovery; Kura read/admin/raw immutability/stale refresh; Skill CAS/path/ownership/uninstall; R8 A00/A01; R9 H05",
+      "no network/model/paid calls; all recovery/security refusal codes and transition_calls=0 independently observed"
+    ]},
+    {"id":"R11","state":"RUNNING","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]}
   ],
   "evidence_refs": [
     "R0/runtime-model-proof:gpt-5.6-luna/max",
@@ -128,16 +133,19 @@
     ,"FIRST_USABLE/fresh-verifier:receipt-run-1788939704248"
     ,"R9/compatibility-focused:11/11"
     ,"R9/full-regression:161/161"
-    ,"R9/independent-verifier:histos-ephemera-contracts-PASS"
+     ,"R9/independent-verifier:histos-ephemera-contracts-PASS"
+     ,"R10/recovery-security-focused:1/1"
+     ,"R10/full-regression:162/162"
+     ,"R10/independent-verifier:seven-probes-PASS"
   ],
   "blockers": [
     "R5 activation proof NOT_RUN: no local LM Studio/Ollama model is available on this host; do not claim Codex/OpenCode trigger PASS until a process-local native client probe succeeds"
   ],
   "unresolved_side_effects": [],
-  "ready_next": "R10: recovery/security/long-run regression across R2-R9 surfaces; R5 activation remains WAITING on native local model/client proof.",
+  "ready_next": "R11: final exact-candidate regression, H01 benchmark, FIRST_USABLE user-flow rerun, final independent verification and bounded delivery checkpoint; R5 activation remains WAITING on native local model/client proof.",
   "last_checkpoint": {
-    "at": "2026-09-09T17:10:00+09:00",
-    "kind": "R9_ACCEPTED_FIRST_USABLE_PASS",
-    "candidate_sha": "df8ffdffe10e27e332bea0f5baaf0ad0bd0e2e26"
+    "at": "2026-09-09T17:22:00+09:00",
+    "kind": "R10_ACCEPTED_R11_RUNNING",
+    "candidate_sha": "c2088be60a7359d14a42f69acb08495133d9969f"
   }
 }
