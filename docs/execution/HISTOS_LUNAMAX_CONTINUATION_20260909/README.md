@@ -12,6 +12,7 @@ Read in this order:
 2. [`RUNBOOK.md`](RUNBOOK.md) — Luna Max orchestration, authority, recovery, parallelism, verification and reporting.
 3. [`STATE.json`](STATE.json) — initial machine-readable queue/checkpoint. Update this single state file rather than maintaining a second manual task-status table.
 4. [`LAUNCH_PROMPT.md`](LAUNCH_PROMPT.md) — short launch instruction for the Coordinator.
+5. [`POST_PROGRAM_LANDING_PROMPT.md`](POST_PROGRAM_LANDING_PROMPT.md) — use only after the execution loop reports `PROGRAM_DONE`; preserves the exact local candidate to a remote Draft acceptance surface and stops before protected-branch merge/release.
 
 Implementation contracts already present on this lineage remain authoritative for their bounded components:
 
