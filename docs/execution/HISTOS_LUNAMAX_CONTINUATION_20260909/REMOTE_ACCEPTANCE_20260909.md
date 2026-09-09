@@ -94,9 +94,9 @@ The landing Coordinator's fresh Codex session metadata, not prompt text, records
 
 ## Landing gate
 
-The first post-push remote readback verified head `a03fd8b330c7d0d53a3469e5b0c168e73ef665b7`, tree `e0952e28352df24364724a4255ce58328839708d`, parent `639fc5769abeb2db5f7193615bab1f54a2004f55`, a clean worktree, `PROGRAM_DONE`/`FIRST_USABLE=PASS`/R11 `DONE`, exact aggregate coverage `27/27`, and `git diff --check=PASS`. The final fast-forward commit carrying this status is independently re-run after push; `REMOTE_CANDIDATE_ACCEPTED` means the non-protected remote candidate passed that exact-SHA gate, not that a protected merge or release occurred.
+The first post-push readback at head `a03fd8b330c7d0d53a3469e5b0c168e73ef665b7` (tree `e0952e28352df24364724a4255ce58328839708d`) is retained as historical evidence only. The pre-document-update remote readback verified head `2a6e38e5c88c878a212220a5da274e3abe8a5248`, tree `76192959a68c56a90c252516fc6fa0ef687a8728`, parent `d2491d9185207167ad58d3902530cb294c60171e`, a clean worktree, `PROGRAM_DONE`/`FIRST_USABLE=PASS`/R11 `DONE`, exact aggregate coverage `27/27`, and `git diff --check=PASS`. The final remote user-flow and independent verifier are bound to that exact head; `REMOTE_CANDIDATE_ACCEPTED` means the non-protected remote candidate passed that exact-SHA gate, not that a protected merge or release occurred.
 
-After the identity correction, the final landing ref was re-read as `REMOTE_CANDIDATE_ACCEPTED` at its new exact SHA and independently rerun with the same gates; the original `639fc...` checkpoint and the pre-correction `985ae...` landing commit remain available as historical evidence.
+After the identity correction and publication redaction, the landing ref was re-read as `REMOTE_CANDIDATE_ACCEPTED` at `2a6e38e5c88c878a212220a5da274e3abe8a5248` and independently rerun with the same gates; the original `639fc...` checkpoint and pre-correction landing commits remain available as historical evidence. This acceptance-file update is documentation-only and descends from that verified tip; GitHub PR head/tree readback is authoritative for the current tip and must be re-read after this update.
 
 Protected merge remains outside this run.
 
