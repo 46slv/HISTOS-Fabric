@@ -1,0 +1,8 @@
+{
+  "name": "histos-fabric",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tools/events/evidence-events.test.mjs tools/events/evidence-doctor.test.mjs"
+  }
+}
