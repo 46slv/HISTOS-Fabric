@@ -49,6 +49,10 @@ The verifier observed the same scope and snapshot, two independent provider chil
 
 Fresh receipt readbacks are content-addressed locally as candidate-flow `be0a9ca42b648786d8a35fa445e6d3a61893bdb4cfc9aaeb19e8917f31dc0af4` and checkpoint-flow `315f421352262b80b652d9ebe06c7eea9f44966b52da1e1c2060fd97b5d9a632`; both contain criteria 1-6 PASS and the exact candidate/checkpoint identity. The prior canonical final receipt remains a separate historical receipt and was not used as the sole gate.
 
+### Publication scan
+
+The pre-review landing tip `82761efd140e777331cd1dc054648570b6df1845` was not silently accepted: a fresh changed-file scan found no actual secret material, but identified local runtime paths and fingerprints in the publication copy. The minimal redaction commit withheld absolute paths, session/profile/instance identifiers, temporary receipt paths and protected config/auth fingerprints while preserving status, digests and test evidence. The resulting tip was requalified from a fresh worktree; original checkpoints and pre-redaction commits remain immutable historical evidence. Synthetic credential strings remain only as explicit negative-test fixtures.
+
 ## Native and compatibility evidence
 
 The following are immutable receipt readbacks from the accepted R5/R9/R10 evidence recorded in `STATE.json`; they are not reclassified as new local-model runs in this landing step.
