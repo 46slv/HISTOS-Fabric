@@ -26,7 +26,7 @@
     "research_synthesis_pr": 4,
     "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
   },
-  "active_task": "R9",
+  "active_task": "R10",
   "tasks": [
     {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
@@ -89,8 +89,13 @@
       "A00 duplicate/replay remains one occurrence; missing/stale/out-of-scope/authority/secret/forged signature/operation mismatch refuse; OBSERVED authority=none/current_truth=false/activation unauthorized",
       "A01 telemetry is routing-only: stripped report deep-equals direct evaluate report, selection/rollback hashes unchanged, friction/smooth-positive routes bounded; no network/model/paid calls"
     ]},
-    {"id":"R9","state":"RUNNING","depends_on":["R1","R2","R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
-    {"id":"R10","state":"PENDING","depends_on":["R2","R3","R4","R5","R6","R7","R8","R9"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R9","state":"DONE","depends_on":["R1","R2","R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=df8ffdf; worker a01c9eb and Coordinator aggregate integration; HISTOS R9 focused suite 11/11 pass",
+      "fresh independent verifier exact candidate PASS: npm ci exit0, full npm test 161/161, git diff --check clean; positive real H01 compileContextCapsule + faithful H03 recall contract",
+      "EPHEMERA canonical ref program/ephemera-full-20260908@cf26daf7b661147ce101f8bec331a5ebe8812dc8; isolated H05 adapter test 10/10 pass",
+      "H05 seam binds histos.context-capsule/v1 and histos.memory-recall/v0 scope/snapshot/current-truth/evidence; detached callbacks; Mission transition sentinel 0 calls; stale/out-of-scope/authority/current-truth/unknown/missing/secret/control/replay refusals PASS"
+    ]},
+    {"id":"R10","state":"RUNNING","depends_on":["R2","R3","R4","R5","R6","R7","R8","R9"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
     {"id":"R11","state":"PENDING","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]}
   ],
   "evidence_refs": [
@@ -121,15 +126,18 @@
     ,"R8/full-regression:150/150"
     ,"R8/independent-verifier:a00-a01-scope-replay-authority-routing-PASS"
     ,"FIRST_USABLE/fresh-verifier:receipt-run-1788939704248"
+    ,"R9/compatibility-focused:11/11"
+    ,"R9/full-regression:161/161"
+    ,"R9/independent-verifier:histos-ephemera-contracts-PASS"
   ],
   "blockers": [
     "R5 activation proof NOT_RUN: no local LM Studio/Ollama model is available on this host; do not claim Codex/OpenCode trigger PASS until a process-local native client probe succeeds"
   ],
   "unresolved_side_effects": [],
-  "ready_next": "R9: fresh EPHEMERA-System contract proof through HISTOS context/memory/event seams; R5 activation remains WAITING on native local model/client proof.",
+  "ready_next": "R10: recovery/security/long-run regression across R2-R9 surfaces; R5 activation remains WAITING on native local model/client proof.",
   "last_checkpoint": {
-    "at": "2026-09-09T17:02:00+09:00",
-    "kind": "R8_ACCEPTED_FIRST_USABLE_PASS",
-    "candidate_sha": "ff4a0b1652b5bffe469210c3f015186d84bbf489"
+    "at": "2026-09-09T17:10:00+09:00",
+    "kind": "R9_ACCEPTED_FIRST_USABLE_PASS",
+    "candidate_sha": "df8ffdffe10e27e332bea0f5baaf0ad0bd0e2e26"
   }
 }
