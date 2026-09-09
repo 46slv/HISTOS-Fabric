@@ -1,0 +1,46 @@
+{
+  "schema": "histos.codex-live-canary-state/v1",
+  "plan_id": "HISTOS_CODEX_LIVE_CANARY_20260909",
+  "goal_id": "HISTOS-CODEX-DAILY-CAPTURE-V11",
+  "program_status": "PREFLIGHT",
+  "first_usable": "NOT_YET",
+  "coordinator": {
+    "required_model": "Luna Max",
+    "runtime_proof": null,
+    "verified": false
+  },
+  "starting_lineage": {
+    "repository": "46slv/HISTOS-Fabric",
+    "base_branch": "main",
+    "base_sha": "f3051b088cfb28f04d90b65ce6287657a4317cf3",
+    "execution_branch": "execution/histos-codex-live-canary-20260909"
+  },
+  "runtime_bindings": {
+    "chatgpt_target": "RUNTIME_ONLY_EXPLICIT_CONVERSATION",
+    "chatgpt_target_persisted_in_repo": false,
+    "codex_runtime": null,
+    "histos_profile": null,
+    "canary_scope": null
+  },
+  "active_task": "R0",
+  "tasks": [
+    {"id":"R0","state":"READY","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R1","state":"PENDING","depends_on":["R0"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R2","state":"PENDING","depends_on":["R1"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R3","state":"PENDING","depends_on":["R2"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R4","state":"PENDING","depends_on":["R0","R1"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R5","state":"PENDING","depends_on":["R2","R3","R4"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R6","state":"PENDING","depends_on":["R5"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R7","state":"PENDING","depends_on":["R6"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R8","state":"PENDING","depends_on":["R7"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R9","state":"PENDING","depends_on":["R8"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]}
+  ],
+  "evidence_refs": [],
+  "blockers": [],
+  "unresolved_side_effects": [],
+  "ready_next": "R0: prove live repo/runtime/Luna Max, bind the runtime-only exact ChatGPT conversation, and establish the canary workspace/profile without committing private runtime identifiers.",
+  "last_checkpoint": {
+    "kind": "PLAN_CREATED",
+    "candidate_sha": null
+  }
+}
