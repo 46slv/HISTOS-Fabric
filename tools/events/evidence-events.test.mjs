@@ -74,6 +74,9 @@ test('journal de-duplicates exact replays and rejects conflicting IDs', () => {
   const replayedWithDifferentId = journal.ingest(base({ event_id: 'different-delivery', producer_event_id: undefined }));
   assert.equal(replayedWithDifferentId.duplicate, false);
   assert.equal(journal.size(), 2);
+  const replayKey = 'e'.repeat(64);
+  journal.ingest(base({ event_id: 'replay-a', producer_event_id: undefined, replay_key: replayKey }));
+  assert.throws(() => journal.ingest(base({ event_id: 'replay-b', producer_event_id: undefined, replay_key: replayKey, outcome: 'failure' })), /EVENT_REPLAY_CONFLICT/);
 });
 
 test('lineage and self/recall labels remain non-independent and cannot mint authority', () => {
@@ -149,6 +152,15 @@ test('persistent journal survives a fresh instance and keeps replay/id conflict 
     assert.equal(restarted.size(), 1);
     assert.deepEqual(restarted.list(), first.list());
     assert.throws(() => restarted.ingest({ ...event, event_id: accepted.event.event_id, outcome: 'failure' }), /EVENT_ID_CONFLICT/);
+    const replayKey = 'f'.repeat(64);
+    first.ingest({ ...event, event_id: 'replay-a', producer_event_id: undefined, replay_key: replayKey });
+    assert.throws(() => first.ingest({ ...event, event_id: 'replay-b', producer_event_id: undefined, replay_key: replayKey, outcome: 'failure' }), /EVENT_REPLAY_CONFLICT/);
+    const persistedName = fs.readdirSync(root).find(name => name.endsWith('.json'));
+    const persistedPath = path.join(root, persistedName);
+    const tampered = JSON.parse(fs.readFileSync(persistedPath, 'utf8'));
+    tampered.routing.friction_score += 1;
+    fs.writeFileSync(persistedPath, `${JSON.stringify(tampered, null, 2)}\n`, 'utf8');
+    assert.throws(() => createPersistentEvidenceEventJournal({ root, scope }), /EVENT_JOURNAL_CORRUPT/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }

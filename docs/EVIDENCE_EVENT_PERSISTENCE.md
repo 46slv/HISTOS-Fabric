@@ -8,9 +8,9 @@ authority source.
 createPersistentEvidenceEventJournal({ root, scope }) keeps one content
 addressed JSON record per event. The host-owned root is canonicalized and must
 be a private regular directory; event files are created with exclusive creation
-and flushed before acknowledgement. Reopen validates the schema, scope, digest
-and byte size. Exact replays are idempotent and conflicting event IDs are
-rejected.
+and flushed before acknowledgement. Reopen validates the exact schema, scope,
+digest, byte size and normalized wire shape. Exact replays are idempotent and
+conflicting event IDs or replay identities are rejected.
 
 doctorEvidenceJournal({ journal, ... }) returns a bounded
 histos.evidence-doctor/v1 read model with the separate USED, OBSERVED, PERSISTED,

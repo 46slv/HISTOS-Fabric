@@ -405,6 +405,7 @@ export function createEvidenceEventJournal({ scope, maxEvents = MAX_EVENTS, maxB
     const existing = existingById ?? existingByReplay;
     if (existing) {
       if (existing.event_sha256 !== event.event_sha256 && existing.event_id === event.event_id) fail('EVENT_ID_CONFLICT');
+      if (existingByReplay && existingByReplay.event_sha256 !== event.event_sha256) fail('EVENT_REPLAY_CONFLICT');
       return { accepted: false, duplicate: true, replayed: existing.event_id !== event.event_id, event: clone(existing) };
     }
     if (byId.size >= maxEvents || bytes + event.byte_size > maxBytes) fail('EVENT_JOURNAL_CAPACITY_EXCEEDED');
@@ -516,7 +517,7 @@ export function createPersistentEvidenceEventJournal({ root, scope, maxEvents = 
         event = normalizeEvidenceEvent(candidate, { scope: journalScope ?? undefined, observed_at });
       }
       catch { fail('EVENT_JOURNAL_CORRUPT'); }
-      if (entry.name !== `${event.event_sha256}.json` || event.byte_size !== parsed.byte_size || event.event_sha256 !== parsed.event_sha256) fail('EVENT_JOURNAL_CORRUPT');
+      if (entry.name !== `${event.event_sha256}.json` || event.byte_size !== parsed.byte_size || event.event_sha256 !== parsed.event_sha256 || canonical(parsed) !== canonical(event)) fail('EVENT_JOURNAL_CORRUPT');
       const existingById = byId.get(event.event_id);
       if (existingById && existingById.event_sha256 !== event.event_sha256) fail('EVENT_ID_CONFLICT');
       const existingByReplay = byReplay.get(event.replay_identity.replay_key);
@@ -539,6 +540,7 @@ export function createPersistentEvidenceEventJournal({ root, scope, maxEvents = 
     const existing = existingById ?? existingByReplay;
     if (existing) {
       if (existingById && existingById.event_sha256 !== event.event_sha256) fail('EVENT_ID_CONFLICT');
+      if (existingByReplay && existingByReplay.event_sha256 !== event.event_sha256) fail('EVENT_REPLAY_CONFLICT');
       return { accepted: false, duplicate: true, replayed: existing.event_id !== event.event_id, event: clone(existing) };
     }
     if (current.byId.size >= maxEvents || current.bytes + event.byte_size > maxBytes) fail('EVENT_JOURNAL_CAPACITY_EXCEEDED');
@@ -552,9 +554,12 @@ export function createPersistentEvidenceEventJournal({ root, scope, maxEvents = 
     } catch (error) {
       if (error?.code !== 'EEXIST') fail('EVENT_JOURNAL_WRITE_FAILED');
       const after = readAll();
-      const existingAfter = after.byId.get(event.event_id) ?? after.byReplay.get(event.replay_identity.replay_key);
+      const existingByIdAfter = after.byId.get(event.event_id);
+      const existingByReplayAfter = after.byReplay.get(event.replay_identity.replay_key);
+      const existingAfter = existingByIdAfter ?? existingByReplayAfter;
       if (existingAfter) {
-        if (after.byId.get(event.event_id)?.event_sha256 && after.byId.get(event.event_id).event_sha256 !== event.event_sha256) fail('EVENT_ID_CONFLICT');
+        if (existingByIdAfter?.event_sha256 && existingByIdAfter.event_sha256 !== event.event_sha256) fail('EVENT_ID_CONFLICT');
+        if (existingByReplayAfter?.event_sha256 && existingByReplayAfter.event_sha256 !== event.event_sha256) fail('EVENT_REPLAY_CONFLICT');
         return { accepted: false, duplicate: true, replayed: existingAfter.event_id !== event.event_id, event: clone(existingAfter) };
       }
       fail('EVENT_JOURNAL_WRITE_RACE');
@@ -562,6 +567,9 @@ export function createPersistentEvidenceEventJournal({ root, scope, maxEvents = 
     return { accepted: true, duplicate: false, replayed: false, event: clone(event) };
   };
 
+  // Re-opening a persistent journal validates every existing record before
+  // exposing the handle; callers never receive a lazy view over corrupt bytes.
+  readAll();
   return {
     ingest,
     append: ingest,
