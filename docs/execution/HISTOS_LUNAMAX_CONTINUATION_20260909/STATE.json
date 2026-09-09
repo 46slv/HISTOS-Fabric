@@ -26,7 +26,7 @@
     "research_synthesis_pr": 4,
     "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
   },
-  "active_task": "R6",
+  "active_task": "R8",
   "tasks": [
     {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
       "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
@@ -70,7 +70,13 @@
       "same portable SKILL.md body for Codex/OpenCode, deterministic source/projection/ownership manifests, CAS update/drift refusal and managed-only uninstall pass",
       "activation evidence intentionally remains NOT_RUN; actual Codex/OpenCode trigger/non-trigger host proof is not claimed"
     ]},
-    {"id":"R6","state":"PENDING","depends_on":["R2","R3","R4"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R6","state":"DONE","depends_on":["R2","R3","R4"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
+      "accepted candidate=ca7e3ec; worker 051a45c and Coordinator aggregate integration ca7e3ec; fresh independent verifier exact candidate PASS",
+      "DistillationProvider descriptor model_assisted/egress=none/capabilities=capture_candidate,distill with process-local generate only; optional Kura read-only evaluateCandidate uses pinned R4 quote/echo floor and raw store remains unchanged",
+      "H03 acceptance strips provider confidence/status, requires explicit host decision and verifyProvenance for verified records; positive Kura-grounded candidate accepted with 2 independent supports; authority=none,current_truth=false",
+      "bounded refusals and tests: store echo, unsupported quote/numeric, duplicate lineage, stale/scope, provider failure, rate/cost/time, secret/transcript, nested/camelCase authority/currentTruth; H04 retry/coalesce/replay/restart preserved",
+      "fresh verifier: npm ci PASS; focused R6 7/7; repository aggregate 145/145; git diff --check clean; global fetch guard observed no network/model call; provider registry remember/write unsupported"
+    ]},
     {"id":"R7","state":"DONE","depends_on":["R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[
       "accepted candidate=1d0a62b; worker 4d9d814 and Coordinator hardening integrated; package aggregate now includes friction replay",
       "fresh verifier held-out fixture schema histos.friction-replay-report/v1: 8 records (dev4/held_out4), fixture_sha256=9a75e19e468d6854b567618e3f753586a3122d9666119b28716b0599a13b33e0",
@@ -102,16 +108,19 @@
     "R5/projection-focused:8/8",
     "R5/independent-verifier:CAS-drift-managed-uninstall-path-guards-PASS-activation-NOT_RUN",
     "R7/replay-focused:5/5",
-    "R7/independent-verifier:heldout-routes-budgets-scope-utility-only-PASS"
+    "R7/independent-verifier:heldout-routes-budgets-scope-utility-only-PASS",
+    "R6/distillation-focused:7/7",
+    "R6/full-regression:145/145",
+    "R6/independent-verifier:kura-h03-h04-network-guard-PASS"
   ],
   "blockers": [
     "R5 activation proof NOT_RUN: no local LM Studio/Ollama model is available on this host; do not claim Codex/OpenCode trigger PASS until a process-local native client probe succeeds"
   ],
   "unresolved_side_effects": [],
-  "ready_next": "R6: implement bounded provider distillation through H04 scheduling and H03 acceptance; R5 activation probe remains independently retryable without broadening provider/credential scope.",
+  "ready_next": "R8: integrate Evidence Event routing into existing A00/A01 non-authoritative and held-out gates; R5 activation remains WAITING on native local model/client proof.",
   "last_checkpoint": {
-    "at": "2026-09-09T16:22:00+09:00",
-    "kind": "R4_R5_R7_CHECKPOINT",
-    "candidate_sha": "1d0a62b8137c12a096ca897e78b5441712cf0462"
+    "at": "2026-09-09T16:38:00+09:00",
+    "kind": "R6_ACCEPTED",
+    "candidate_sha": "ca7e3ec545486ed9318dadb57ff214090add7ec9"
   }
 }
