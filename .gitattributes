@@ -1,0 +1,11 @@
+# These frozen identities refer to exact bytes, including line endings.
+bench/fixtures/public-chatgpt-mcp-v1/* -text
+bench/public-corpus-v1.json -text
+bench/public-gold-v1.json -text
+bench/public-gold-freeze-v1.json -text
+bench/evidence/* -text
+# The baseline evidence also fingerprints these exact implementation bytes.
+tools/bench/lexical-baseline.mjs -text
+tools/bench/context-capsule.mjs -text
+tools/bench/frozen-benchmark.mjs -text
+package-lock.json -text
