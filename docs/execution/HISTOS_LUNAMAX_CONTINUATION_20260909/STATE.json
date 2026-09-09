@@ -2,12 +2,19 @@
   "schema": "histos.autonomous-continuation-state/v1",
   "plan_id": "HISTOS_LUNAMAX_CONTINUATION_20260909",
   "goal_id": "HISTOS-V1-OPERATIONAL-LOOP",
-  "program_status": "PREFLIGHT",
+  "program_status": "RUNNING",
   "first_usable": "NOT_YET",
   "coordinator": {
     "required_model": "Luna Max",
-    "runtime_proof": null,
-    "verified": false
+    "runtime_proof": {
+      "model": "gpt-5.6-luna",
+      "reasoning_effort": "max",
+      "session_id": "01a084c4-ecd9-73e1-b7be-599eb3ae9bc0",
+      "session_metadata": "C:\\Users\\shiro\\.codex\\sessions\\2026\\09\\09\\rollout-2026-09-09T15-04-53-01a084c4-ecd9-73e1-b7be-599eb3ae9bc0.jsonl",
+      "config_metadata": "C:\\Users\\shiro\\.codex\\config.toml",
+      "observed": "session world_state.state.model=gpt-5.6-luna; config model=gpt-5.6-luna and model_reasoning_effort=max"
+    },
+    "verified": true
   },
   "starting_lineage": {
     "repository": "46slv/HISTOS-Fabric",
@@ -19,9 +26,15 @@
     "research_synthesis_pr": 4,
     "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
   },
-  "active_task": "R0",
+  "active_task": "R1",
   "tasks": [
-    {"id":"R0","state":"READY","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R0","state":"DONE","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[
+      "checkout=execution/histos-lunamax-continuation-20260909@c1c264ccba5113022ce677591c8673814bfbdebb; base=program/ephemera-full-20260908-delivery@ff4a68beaa4094acfbd35b70d49f986f712f9d30; worktree clean after candidate integration",
+      "remote refs fresh-read: execution branch fe51dd378101c3f52ff7e7bae3010bfb98332e81; PR3 5135ef4e65f906534d7348797b2a06481394667d; PR4 701de5ab01c9686e356a923c2ac6f9bdfd69e8a5",
+      "PR3 isolated host run: npm ci && npm test -> 106 tests, 106 pass, 0 fail, 0 skipped",
+      "PR3 structural aggregate coverage: actual=18 test suites, listed=18, missing=0, extra=0, duplicates=0",
+      "PR4 classification: Evidence Event=NEW CAPABILITY; provider registry/grounding/Kura=PROVIDER/ADAPTER (Kura comparison also BENCHMARK/QUALIFICATION); Agent Skill projection=NEW CAPABILITY; friction replay=BENCHMARK/QUALIFICATION; A00/A01 integration and H02/H03/H04 boundary preservation=HARDENING"
+    ]},
     {"id":"R1","state":"PENDING","depends_on":["R0"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
     {"id":"R2","state":"PENDING","depends_on":["R1"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
     {"id":"R3","state":"PENDING","depends_on":["R1","R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
@@ -34,13 +47,18 @@
     {"id":"R10","state":"PENDING","depends_on":["R2","R3","R4","R5","R6","R7","R8","R9"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
     {"id":"R11","state":"PENDING","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]}
   ],
-  "evidence_refs": [],
+  "evidence_refs": [
+    "R0/runtime-model-proof:gpt-5.6-luna/max",
+    "R0/pr3-host-tests:106/106",
+    "R0/pr3-aggregate-coverage:18/18",
+    "R0/pr4-research-classification:captured"
+  ],
   "blockers": [],
   "unresolved_side_effects": [],
-  "ready_next": "R0: prove Luna Max coordinator/runtime, reconcile local/remote branches, validate aggregate test candidate, choose exact integration HEAD.",
+  "ready_next": "R1: qualify native H01/H02/H03/H04/H06/A00/A01 baseline with full tests, frozen H01 benchmark, two-client H02 path, H03 recall/current-truth separation and H04 bounded recovery.",
   "last_checkpoint": {
     "at": "2026-09-09T13:55:00+09:00",
     "kind": "PLAN_CREATED",
-    "candidate_sha": null
+    "candidate_sha": "c1c264ccba5113022ce677591c8673814bfbdebb"
   }
 }
