@@ -1,0 +1,46 @@
+{
+  "schema": "histos.autonomous-continuation-state/v1",
+  "plan_id": "HISTOS_LUNAMAX_CONTINUATION_20260909",
+  "goal_id": "HISTOS-V1-OPERATIONAL-LOOP",
+  "program_status": "PREFLIGHT",
+  "first_usable": "NOT_YET",
+  "coordinator": {
+    "required_model": "Luna Max",
+    "runtime_proof": null,
+    "verified": false
+  },
+  "starting_lineage": {
+    "repository": "46slv/HISTOS-Fabric",
+    "execution_base_ref": "program/ephemera-full-20260908-delivery",
+    "execution_base_sha": "ff4a68beaa4094acfbd35b70d49f986f712f9d30",
+    "plan_branch": "execution/histos-lunamax-continuation-20260909",
+    "test_aggregate_candidate_pr": 3,
+    "test_aggregate_candidate_sha": "5135ef4e65f906534d7348797b2a06481394667d",
+    "research_synthesis_pr": 4,
+    "research_synthesis_sha": "701de5ab01c9686e356a923c2ac6f9bdfd69e8a5"
+  },
+  "active_task": "R0",
+  "tasks": [
+    {"id":"R0","state":"READY","depends_on":[],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R1","state":"PENDING","depends_on":["R0"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]},
+    {"id":"R2","state":"PENDING","depends_on":["R1"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R3","state":"PENDING","depends_on":["R1","R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R4","state":"PENDING","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R5","state":"PENDING","depends_on":["R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R6","state":"PENDING","depends_on":["R2","R3","R4"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R7","state":"PENDING","depends_on":["R2"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R8","state":"PENDING","depends_on":["R2","R7"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R9","state":"PENDING","depends_on":["R1","R2","R3"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R10","state":"PENDING","depends_on":["R2","R3","R4","R5","R6","R7","R8","R9"],"required_for_first_usable":false,"required_for_program_done":true,"evidence":[]},
+    {"id":"R11","state":"PENDING","depends_on":["R10"],"required_for_first_usable":true,"required_for_program_done":true,"evidence":[]}
+  ],
+  "evidence_refs": [],
+  "blockers": [],
+  "unresolved_side_effects": [],
+  "ready_next": "R0: prove Luna Max coordinator/runtime, reconcile local/remote branches, validate aggregate test candidate, choose exact integration HEAD.",
+  "last_checkpoint": {
+    "at": "2026-09-09T13:55:00+09:00",
+    "kind": "PLAN_CREATED",
+    "candidate_sha": null
+  }
+}
