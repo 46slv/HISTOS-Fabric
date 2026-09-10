@@ -1,11 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 import {
   adaptCodexEvent,
   adaptOpenCodeEvent,
   canonical,
   createEvidenceEventJournal,
+  createPersistentEvidenceEventJournal,
   digest,
   normalizeEvidenceEvent,
   normalizeVerifierEvent,
@@ -70,6 +74,9 @@ test('journal de-duplicates exact replays and rejects conflicting IDs', () => {
   const replayedWithDifferentId = journal.ingest(base({ event_id: 'different-delivery', producer_event_id: undefined }));
   assert.equal(replayedWithDifferentId.duplicate, false);
   assert.equal(journal.size(), 2);
+  const replayKey = 'e'.repeat(64);
+  journal.ingest(base({ event_id: 'replay-a', producer_event_id: undefined, replay_key: replayKey }));
+  assert.throws(() => journal.ingest(base({ event_id: 'replay-b', producer_event_id: undefined, replay_key: replayKey, outcome: 'failure' })), /EVENT_REPLAY_CONFLICT/);
 });
 
 test('lineage and self/recall labels remain non-independent and cannot mint authority', () => {
@@ -92,6 +99,14 @@ test('scope, secret, transcript, malformed and stale references fail closed', ()
   assert.throws(() => normalizeEvidenceEvent(base({ privacy_class: 'secret' })), /EVENT_SECRET_PRIVACY_CLASS/);
   assert.throws(() => normalizeEvidenceEvent(base({ event_kind: 'unknown-kind' })), /EVENT_KIND_INVALID/);
   assert.throws(() => normalizeEvidenceEvent(base({ occurred_at: 'yesterday' })), /EVENT_OCCURRED_AT_INVALID/);
+});
+
+test('camelCase and compact safety-key aliases fail closed inside operation contracts', () => {
+  const operation = { operation_id: 'safe-contract', name: 'safe-contract', version: '1', semantic_steps: ['inspect'] };
+  assert.throws(() => normalizeEvidenceEvent(base({ operation_signature: { ...operation, input_contract: { accessToken: 'blocked' } } })), /EVENT_SECRET_PAYLOAD/);
+  assert.throws(() => normalizeEvidenceEvent(base({ operation_signature: { ...operation, output_contract: { rawTranscript: 'blocked' } } })), /EVENT_TRANSCRIPT_PAYLOAD/);
+  assert.throws(() => normalizeEvidenceEvent(base({ operation_signature: { ...operation, input_contract: { currentTruth: true } } })), /EVENT_AUTHORITY_MUTATION/);
+  assert.throws(() => normalizeEvidenceEvent(base({ operation_signature: { ...operation, input_contract: { accesstoken: 'blocked' } } })), /EVENT_SECRET_PAYLOAD/);
 });
 
 test('friction and smooth-positive routes coexist without evidence promotion', () => {
@@ -117,4 +132,36 @@ test('telemetry adapters are bounded projections, not alternate authorities', ()
 test('canonical digest is deterministic and secret/transcript fields are never canonicalized into an event', () => {
   assert.equal(canonical({ b: 2, a: 1 }), '{"a":1,"b":2}');
   assert.match(digest({ a: 1 }), /^[a-f0-9]{64}$/);
+});
+
+test('persistent journal survives a fresh instance and keeps replay/id conflict gates', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'histos-evidence-journal-'));
+  try {
+    const first = createPersistentEvidenceEventJournal({ root, scope, observed_at: '2026-09-09T01:02:04.000Z' });
+    const event = base({ observed_at: undefined, event_kind: 'operation_observation', operation_signature: { operation_id: 'normal-context', name: 'context_compile', version: '1', semantic_steps: ['context_search', 'context_compile'] } });
+    const accepted = first.ingest(event);
+    const duplicate = first.ingest(event);
+    assert.equal(accepted.accepted, true);
+    assert.equal(duplicate.duplicate, true);
+    assert.equal(first.inspect().durable, true);
+    assert.equal(first.list().length, 1);
+
+    // A separately constructed journal models a process restart and must read
+    // the same content-addressed event without an in-memory handoff.
+    const restarted = createPersistentEvidenceEventJournal({ root, scope, observed_at: '2026-09-09T01:02:04.000Z' });
+    assert.equal(restarted.size(), 1);
+    assert.deepEqual(restarted.list(), first.list());
+    assert.throws(() => restarted.ingest({ ...event, event_id: accepted.event.event_id, outcome: 'failure' }), /EVENT_ID_CONFLICT/);
+    const replayKey = 'f'.repeat(64);
+    first.ingest({ ...event, event_id: 'replay-a', producer_event_id: undefined, replay_key: replayKey });
+    assert.throws(() => first.ingest({ ...event, event_id: 'replay-b', producer_event_id: undefined, replay_key: replayKey, outcome: 'failure' }), /EVENT_REPLAY_CONFLICT/);
+    const persistedName = fs.readdirSync(root).find(name => name.endsWith('.json'));
+    const persistedPath = path.join(root, persistedName);
+    const tampered = JSON.parse(fs.readFileSync(persistedPath, 'utf8'));
+    tampered.routing.friction_score += 1;
+    fs.writeFileSync(persistedPath, `${JSON.stringify(tampered, null, 2)}\n`, 'utf8');
+    assert.throws(() => createPersistentEvidenceEventJournal({ root, scope }), /EVENT_JOURNAL_CORRUPT/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 });

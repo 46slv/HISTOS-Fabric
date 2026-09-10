@@ -1,4 +1,6 @@
 import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 
 /**
  * Provider-neutral Evidence Event boundary.
@@ -39,15 +41,16 @@ const MAX_ARTIFACT_BYTES = 16 * 1024 * 1024;
 const MAX_REFS = 128;
 const MAX_LINEAGE = 16;
 const MAX_EVENTS = 10_000;
-const CONTROL_KEYS = new Set([
+const expandSafetyKeys = keys => new Set([...keys, ...keys.map(key => key.replaceAll('_', ''))]);
+const CONTROL_KEYS = expandSafetyKeys([
   'authority', 'current_truth', 'verified', 'active', 'activation', 'permission',
   'retention', 'mission_state', 'completion', 'safety', 'budget', 'proof', 'support',
 ]);
-const SECRET_KEYS = new Set([
+const SECRET_KEYS = expandSafetyKeys([
   'secret', 'secrets', 'password', 'passwd', 'token', 'access_token', 'refresh_token',
   'api_key', 'apikey', 'credential', 'credentials', 'authorization', 'cookie', 'private_key',
 ]);
-const TRANSCRIPT_KEYS = new Set([
+const TRANSCRIPT_KEYS = expandSafetyKeys([
   'transcript', 'raw_transcript', 'messages', 'conversation', 'chat_history', 'session_text',
   'raw_session', 'prompt', 'completion', 'assistant_message', 'user_message', 'chat_log',
   'payload', 'raw_input', 'raw_output', 'raw_text',
@@ -110,10 +113,19 @@ function checkSafeObject(value, depth = 0) {
   }
   if (!value || typeof value !== 'object') return;
   for (const [key, item] of Object.entries(value)) {
-    const normalizedKey = key.toLowerCase().replaceAll('-', '_');
-    if (CONTROL_KEYS.has(normalizedKey)) fail('EVENT_AUTHORITY_MUTATION');
-    if (SECRET_KEYS.has(normalizedKey)) fail('EVENT_SECRET_PAYLOAD');
-    if (TRANSCRIPT_KEYS.has(normalizedKey)) fail('EVENT_TRANSCRIPT_PAYLOAD');
+    // Normalize separators and camelCase before checking.  Qualification
+    // adapters used both snake_case and JavaScript-style metadata names; a
+    // spelling variant must not bypass the same fail-closed boundary.
+    const normalizedKey = key
+      .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+      .replace(/[\s-]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .toLowerCase();
+    const safetyKeys = new Set([normalizedKey, normalizedKey.replaceAll('_', ''), key.toLowerCase().replace(/[\s_-]+/g, '')]);
+    if ([...safetyKeys].some(candidate => CONTROL_KEYS.has(candidate))) fail('EVENT_AUTHORITY_MUTATION');
+    if ([...safetyKeys].some(candidate => SECRET_KEYS.has(candidate))) fail('EVENT_SECRET_PAYLOAD');
+    if ([...safetyKeys].some(candidate => TRANSCRIPT_KEYS.has(candidate))) fail('EVENT_TRANSCRIPT_PAYLOAD');
     if (typeof item === 'string' && item.length > 16 * 1024) fail('EVENT_FIELD_OVERSIZED');
     checkSafeObject(item, depth + 1);
   }
@@ -393,6 +405,7 @@ export function createEvidenceEventJournal({ scope, maxEvents = MAX_EVENTS, maxB
     const existing = existingById ?? existingByReplay;
     if (existing) {
       if (existing.event_sha256 !== event.event_sha256 && existing.event_id === event.event_id) fail('EVENT_ID_CONFLICT');
+      if (existingByReplay && existingByReplay.event_sha256 !== event.event_sha256) fail('EVENT_REPLAY_CONFLICT');
       return { accepted: false, duplicate: true, replayed: existing.event_id !== event.event_id, event: clone(existing) };
     }
     if (byId.size >= maxEvents || bytes + event.byte_size > maxBytes) fail('EVENT_JOURNAL_CAPACITY_EXCEEDED');
@@ -413,6 +426,160 @@ export function createEvidenceEventJournal({ scope, maxEvents = MAX_EVENTS, maxB
     bytes: () => bytes,
     clear: () => { byId.clear(); byReplay.clear(); bytes = 0; },
     inspect: () => ({ schema: 'histos.evidence-event-journal/v1', scope: journalScope ? clone(journalScope) : null, count: byId.size, bytes }),
+  };
+}
+
+const PERSISTENT_EVENT_FILE = /^[a-f0-9]{64}\.json$/u;
+
+// The in-memory journal above is deliberately useful for adapters and unit
+// tests, but a live host needs a restart-safe owner for the same ingest
+// contract.  This small file-native journal is intentionally not a Mission
+// store: it persists only normalized Evidence Events, revalidates every read,
+// and exposes no transition, activation, verification or authority method.
+// The root is caller-owned and must remain outside a task worktree.
+function privateJournalRoot(inputRoot) {
+  if (typeof inputRoot !== 'string' || !inputRoot.trim()) fail('EVENT_JOURNAL_ROOT_REQUIRED');
+  const target = path.resolve(inputRoot);
+  let current = path.parse(target).root;
+  for (const part of target.slice(current.length).split(path.sep).filter(Boolean)) {
+    current = path.join(current, part);
+    let stat;
+    try { stat = fs.lstatSync(current); }
+    catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
+      fs.mkdirSync(current, { mode: 0o700 });
+      stat = fs.lstatSync(current);
+    }
+    if (!stat.isDirectory() || stat.isSymbolicLink?.() || stat.isReparsePoint?.() || (Number.isInteger(stat.nlink) && stat.nlink > 1)) {
+      fail('EVENT_JOURNAL_ROOT_UNSAFE');
+    }
+  }
+  return target;
+}
+
+function persistentEventBytes(event) {
+  return `${JSON.stringify(event, null, 2)}\n`;
+}
+
+/**
+ * Create a restart-safe Evidence Event journal.
+ *
+ * Each normalized event is addressed by its content digest.  Re-opening the
+ * journal rechecks schema, scope, digest and byte size, so a malformed or
+ * replaced file fails closed.  Exact event/replay duplicates remain
+ * idempotent; a conflicting event id is rejected without silently deleting
+ * the existing evidence.  The journal never accepts raw transcripts,
+ * secrets, Mission state or verifier authority because normalization is the
+ * single ingest boundary.
+ */
+export function createPersistentEvidenceEventJournal({ root, scope, maxEvents = MAX_EVENTS, maxBytes = 16 * 1024 * 1024, observed_at } = {}) {
+  const journalRoot = privateJournalRoot(root);
+  const journalScope = scope ? normalizeScope({ scope }) : null;
+  integer(maxEvents, 1, MAX_EVENTS, 'EVENT_JOURNAL_CAPACITY_INVALID');
+  integer(maxBytes, 1024, MAX_EVENT_BYTES * MAX_EVENTS, 'EVENT_JOURNAL_BYTES_INVALID');
+
+  function readAll() {
+    const byId = new Map();
+    const byReplay = new Map();
+    let bytes = 0;
+    let names;
+    try { names = fs.readdirSync(journalRoot, { withFileTypes: true }); }
+    catch { fail('EVENT_JOURNAL_UNAVAILABLE'); }
+    for (const entry of names.sort((a, b) => a.name.localeCompare(b.name))) {
+      if (!PERSISTENT_EVENT_FILE.test(entry.name) || !entry.isFile() || entry.isSymbolicLink?.()) fail('EVENT_JOURNAL_CORRUPT');
+      const filePath = path.join(journalRoot, entry.name);
+      let parsed;
+      try { parsed = JSON.parse(fs.readFileSync(filePath, 'utf8')); }
+      catch { fail('EVENT_JOURNAL_CORRUPT'); }
+      let event;
+      try {
+        // The normalized wire shape nests producer_event_id and replay_key
+        // under replay_identity. Restore those aliases before re-normalizing;
+        // otherwise the normalizer would (incorrectly) use event_id as the
+        // producer identity and report a valid persisted event as forged.
+        const candidate = {
+          ...parsed,
+          ...(parsed.replay_identity?.producer_event_id ? { producer_event_id: parsed.replay_identity.producer_event_id } : {}),
+          ...(parsed.replay_identity?.replay_key ? { replay_key: parsed.replay_identity.replay_key } : {}),
+          ...(parsed.routing ? {
+            friction: {
+              user_interrupt_count: parsed.routing.user_interrupt_count,
+              user_correction_count: parsed.routing.user_correction_count,
+              tool_denial_count: parsed.routing.tool_denial_count,
+              tool_error_retry_count: parsed.routing.tool_error_retry_count,
+              repair_iteration_count: parsed.routing.repair_iteration_count,
+              verifier_failure_count: parsed.routing.verifier_failure_count,
+              knowledge_gap_signal: parsed.routing.knowledge_gap_signal,
+            },
+            smooth_positive: parsed.routing.smooth_positive,
+          } : {}),
+        };
+        event = normalizeEvidenceEvent(candidate, { scope: journalScope ?? undefined, observed_at });
+      }
+      catch { fail('EVENT_JOURNAL_CORRUPT'); }
+      if (entry.name !== `${event.event_sha256}.json` || event.byte_size !== parsed.byte_size || event.event_sha256 !== parsed.event_sha256 || canonical(parsed) !== canonical(event)) fail('EVENT_JOURNAL_CORRUPT');
+      const existingById = byId.get(event.event_id);
+      if (existingById && existingById.event_sha256 !== event.event_sha256) fail('EVENT_ID_CONFLICT');
+      const existingByReplay = byReplay.get(event.replay_identity.replay_key);
+      if (existingByReplay && existingByReplay.event_sha256 !== event.event_sha256) fail('EVENT_REPLAY_CONFLICT');
+      if (!existingById && !existingByReplay) {
+        if (byId.size >= maxEvents || bytes + event.byte_size > maxBytes) fail('EVENT_JOURNAL_CAPACITY_EXCEEDED');
+        byId.set(event.event_id, event);
+        byReplay.set(event.replay_identity.replay_key, event);
+        bytes += event.byte_size;
+      }
+    }
+    return { byId, byReplay, bytes };
+  }
+
+  const ingest = input => {
+    const event = normalizeEvidenceEvent(input, { scope: journalScope ?? undefined, observed_at });
+    const current = readAll();
+    const existingById = current.byId.get(event.event_id);
+    const existingByReplay = current.byReplay.get(event.replay_identity.replay_key);
+    const existing = existingById ?? existingByReplay;
+    if (existing) {
+      if (existingById && existingById.event_sha256 !== event.event_sha256) fail('EVENT_ID_CONFLICT');
+      if (existingByReplay && existingByReplay.event_sha256 !== event.event_sha256) fail('EVENT_REPLAY_CONFLICT');
+      return { accepted: false, duplicate: true, replayed: existing.event_id !== event.event_id, event: clone(existing) };
+    }
+    if (current.byId.size >= maxEvents || current.bytes + event.byte_size > maxBytes) fail('EVENT_JOURNAL_CAPACITY_EXCEEDED');
+    const destination = path.join(journalRoot, `${event.event_sha256}.json`);
+    const encoded = persistentEventBytes(event);
+    let fd;
+    try {
+      fd = fs.openSync(destination, 'wx', 0o600);
+      fs.writeFileSync(fd, encoded, 'utf8');
+      fs.fsyncSync(fd);
+    } catch (error) {
+      if (error?.code !== 'EEXIST') fail('EVENT_JOURNAL_WRITE_FAILED');
+      const after = readAll();
+      const existingByIdAfter = after.byId.get(event.event_id);
+      const existingByReplayAfter = after.byReplay.get(event.replay_identity.replay_key);
+      const existingAfter = existingByIdAfter ?? existingByReplayAfter;
+      if (existingAfter) {
+        if (existingByIdAfter?.event_sha256 && existingByIdAfter.event_sha256 !== event.event_sha256) fail('EVENT_ID_CONFLICT');
+        if (existingByReplayAfter?.event_sha256 && existingByReplayAfter.event_sha256 !== event.event_sha256) fail('EVENT_REPLAY_CONFLICT');
+        return { accepted: false, duplicate: true, replayed: existingAfter.event_id !== event.event_id, event: clone(existingAfter) };
+      }
+      fail('EVENT_JOURNAL_WRITE_RACE');
+    } finally { if (fd !== undefined) try { fs.closeSync(fd); } catch { /* preserve durable bytes */ } }
+    return { accepted: true, duplicate: false, replayed: false, event: clone(event) };
+  };
+
+  // Re-opening a persistent journal validates every existing record before
+  // exposing the handle; callers never receive a lazy view over corrupt bytes.
+  readAll();
+  return {
+    ingest,
+    append: ingest,
+    get: eventId => readAll().byId.has(eventId) ? clone(readAll().byId.get(eventId)) : null,
+    list: ({ scope_id = journalScope?.scope_id, includeNonIndependent = true } = {}) => [...readAll().byId.values()]
+      .filter(event => (scope_id ? event.scope.scope_id === scope_id : true) && (includeNonIndependent || event.independence !== 'non_independent'))
+      .sort((a, b) => a.event_id.localeCompare(b.event_id)).map(clone),
+    size: () => readAll().byId.size,
+    bytes: () => readAll().bytes,
+    inspect: () => ({ schema: 'histos.evidence-event-journal/v1', scope: journalScope ? clone(journalScope) : null, count: readAll().byId.size, bytes: readAll().bytes, durable: true }),
   };
 }
 
